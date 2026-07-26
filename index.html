@@ -23,7 +23,7 @@
       padding:
         20px
         16px
-        calc(120px + env(safe-area-inset-bottom));
+        calc(180px + env(safe-area-inset-bottom));
       background: #111111;
       color: #ffffff;
       font-family: Arial, Helvetica, sans-serif;
@@ -114,10 +114,26 @@
       line-height: 1.2;
     }
 
+    .bottom-panel {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: calc(16px + env(safe-area-inset-bottom));
+      width: calc(100% - 32px);
+      max-width: 668px;
+      margin: auto;
+      padding: 10px;
+      border: 2px solid #333333;
+      border-radius: 18px;
+      background: rgba(17, 17, 17, 0.97);
+      box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.45);
+      z-index: 100;
+    }
+
     #status {
-      min-height: 72px;
-      margin-top: 30px;
-      padding: 14px;
+      min-height: 62px;
+      margin-bottom: 10px;
+      padding: 10px 12px;
       border-radius: 12px;
       background: #222222;
       color: #dddddd;
@@ -126,60 +142,48 @@
       align-items: center;
       justify-content: center;
       white-space: pre-line;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
-      line-height: 1.4;
+      line-height: 1.35;
     }
 
-.fade-button {
-    position: fixed;
-    left: 16px;
-    right: 16px;
-    bottom: calc(100px + env(safe-area-inset-bottom));
-    width: calc(100% - 32px);
-    max-width: 668px;
-    margin: auto;
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
 
-    min-height: 56px;
-
-    border: none;
-    border-radius: 14px;
-
-    background: #f0ad4e;
-    color: #111;
-
-    font-size: 18px;
-    font-weight: bold;
-
-    cursor: pointer;
-
-    z-index: 99;
-}
-    
-    .stop-button {
-      position: fixed;
-      left: 16px;
-      right: 16px;
-      bottom: calc(16px + env(safe-area-inset-bottom));
-      width: calc(100% - 32px);
-      max-width: 668px;
-      min-height: 70px;
-      margin: auto;
-      padding: 12px;
-      border: 4px solid #e11822;
-      border-radius: 16px;
-      background: #ffffff;
-      color: #111111;
-      font-size: 20px;
+    .control-button {
+      flex: 1;
+      min-height: 62px;
+      padding: 10px 8px;
+      border-radius: 14px;
+      font-size: 18px;
       font-weight: 800;
       cursor: pointer;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
-      z-index: 100;
     }
 
-    .stop-button:active {
-      transform: scale(0.98);
+    .fade-button {
+      border: none;
+      background: #f0ad4e;
+      color: #111111;
+    }
+
+    .stop-button {
+      border: 4px solid #e11822;
+      background: #ffffff;
+      color: #111111;
+    }
+
+    .control-button:active {
+      transform: scale(0.97);
+    }
+
+    .control-button:disabled {
+      opacity: 0.45;
+      cursor: default;
+      transform: none;
     }
   </style>
 </head>
@@ -197,17 +201,31 @@
 
     <h2>📣 Game Sounds</h2>
     <div id="effect-buttons" class="sound-grid"></div>
-
-    <div id="status">Nothing playing</div>
   </main>
 
-<button class="stop-button" onclick="fadeOutAudio()">
-    🌅 FADE OUT
-</button>
-  
-  <button class="stop-button" onclick="stopAudio()">
-    ⏹ STOP ALL AUDIO
-  </button>
+  <div class="bottom-panel">
+    <div id="status">Nothing playing</div>
+
+    <div class="controls">
+      <button
+        id="fade-button"
+        class="control-button fade-button"
+        onclick="fadeOutAudio()"
+        disabled
+      >
+        🌅 Fade Out
+      </button>
+
+      <button
+        id="stop-button"
+        class="control-button stop-button"
+        onclick="stopAudio()"
+        disabled
+      >
+        ⏹ Stop
+      </button>
+    </div>
+  </div>
 
   <script>
     const playerSongs = [
@@ -326,6 +344,8 @@
 
     let currentAudio = null;
     let currentButton = null;
+    let fadeTimer = null;
+    let isFading = false;
 
     function createButtons(items, containerId, buttonType) {
       const container = document.getElementById(containerId);
@@ -376,8 +396,9 @@
       stopAudio(false);
 
       currentAudio = new Audio(item.file);
-      currentButton = button;
+      currentAudio.volume = 1;
 
+      currentButton = button;
       currentButton.classList.add("playing");
 
       const description = item.song
@@ -385,6 +406,7 @@
         : item.name;
 
       setStatus("Loading...\n" + description);
+      setControlsEnabled(true);
 
       currentAudio.play()
         .then(() => {
@@ -396,81 +418,96 @@
           setStatus(
             "Could not play:\n" +
             description +
-            "\n\nCheck that the audio file has been uploaded."
+            "\n\nCheck that the file has been uploaded."
           );
 
-          clearPlayingButton();
-          currentAudio = null;
+          finishPlayback();
         });
 
       currentAudio.addEventListener("ended", () => {
-        setStatus("Nothing playing");
-        clearPlayingButton();
-        currentAudio = null;
+        finishPlayback();
       });
 
       currentAudio.addEventListener("error", () => {
-        setStatus(
-          "Audio file not found:\n" +
-          description
-        );
-
-        clearPlayingButton();
-        currentAudio = null;
+        setStatus("Audio file not found:\n" + description);
+        finishPlayback();
       });
     }
 
-function fadeOutAudio() {
-
-    if (!currentAudio) {
+    function fadeOutAudio() {
+      if (!currentAudio || isFading) {
         return;
+      }
+
+      isFading = true;
+      setStatus("🌅 FADING OUT...");
+
+      document.getElementById("fade-button").disabled = true;
+
+      const fadeDuration = 3000;
+      const intervalLength = 100;
+      const totalSteps = fadeDuration / intervalLength;
+      const volumeStep = currentAudio.volume / totalSteps;
+
+      fadeTimer = setInterval(() => {
+        if (!currentAudio) {
+          clearFadeTimer();
+          return;
+        }
+
+        const nextVolume = currentAudio.volume - volumeStep;
+
+        if (nextVolume <= 0.01) {
+          currentAudio.volume = 0;
+          clearFadeTimer();
+          stopAudio();
+          return;
+        }
+
+        currentAudio.volume = nextVolume;
+      }, intervalLength);
     }
 
-    const fadeLength = 1000; // milliseconds
-    const interval = 100;
-
-    const step = currentAudio.volume / (fadeLength / interval);
-
-    const fade = setInterval(() => {
-
-        if (!currentAudio) {
-            clearInterval(fade);
-            return;
-        }
-
-        currentAudio.volume -= step;
-
-        if (currentAudio.volume <= 0) {
-
-            clearInterval(fade);
-
-            currentAudio.pause();
-            currentAudio.currentTime = 0;
-            currentAudio.volume = 1;
-
-            clearPlayingButton();
-
-            currentAudio = null;
-
-            setStatus("Nothing playing");
-        }
-
-    }, interval);
-
-}
-    
     function stopAudio(updateStatus = true) {
+      clearFadeTimer();
+
       if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
+        currentAudio.volume = 1;
         currentAudio = null;
       }
 
       clearPlayingButton();
+      setControlsEnabled(false);
 
       if (updateStatus) {
         setStatus("Nothing playing");
       }
+    }
+
+    function finishPlayback() {
+      clearFadeTimer();
+
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio.volume = 1;
+        currentAudio = null;
+      }
+
+      clearPlayingButton();
+      setControlsEnabled(false);
+      setStatus("Nothing playing");
+    }
+
+    function clearFadeTimer() {
+      if (fadeTimer) {
+        clearInterval(fadeTimer);
+        fadeTimer = null;
+      }
+
+      isFading = false;
     }
 
     function clearPlayingButton() {
@@ -478,6 +515,11 @@ function fadeOutAudio() {
         currentButton.classList.remove("playing");
         currentButton = null;
       }
+    }
+
+    function setControlsEnabled(enabled) {
+      document.getElementById("fade-button").disabled = !enabled;
+      document.getElementById("stop-button").disabled = !enabled;
     }
 
     function setStatus(message) {
