@@ -344,6 +344,7 @@
 
     let currentAudio = null;
     let currentButton = null;
+    let currentDescription = "";
     let fadeTimer = null;
     let isFading = false;
 
@@ -401,23 +402,23 @@
       currentButton = button;
       currentButton.classList.add("playing");
 
-      const description = item.song
+      currentDescription = item.song
         ? item.name + "\n" + item.song
         : item.name;
 
-      setStatus("Loading...\n" + description);
+      setStatus("Loading...\n" + currentDescription);
       setControlsEnabled(true);
 
       currentAudio.play()
         .then(() => {
-          setStatus("🎵 NOW PLAYING\n" + description);
+          setStatus("🎵 NOW PLAYING\n" + currentDescription);
         })
         .catch((error) => {
           console.error("Audio playback failed:", error);
 
           setStatus(
             "Could not play:\n" +
-            description +
+            currentDescription +
             "\n\nCheck that the file has been uploaded."
           );
 
@@ -429,7 +430,7 @@
       });
 
       currentAudio.addEventListener("error", () => {
-        setStatus("Audio file not found:\n" + description);
+        setStatus("Audio file not found:\n" + currentDescription);
         finishPlayback();
       });
     }
@@ -440,31 +441,53 @@
       }
 
       isFading = true;
-      setStatus("🌅 FADING OUT...");
+
+      const audioBeingFaded = currentAudio;
+      const fadeDuration = 1000;
+      const intervalLength = 50;
+      const startingVolume = audioBeingFaded.volume;
+      const startedAt = Date.now();
+
+      setStatus(
+        "🌅 FADING OUT...\n" +
+        currentDescription
+      );
 
       document.getElementById("fade-button").disabled = true;
 
-      const fadeDuration = 3000;
-      const intervalLength = 100;
-      const totalSteps = fadeDuration / intervalLength;
-      const volumeStep = currentAudio.volume / totalSteps;
-
       fadeTimer = setInterval(() => {
-        if (!currentAudio) {
+        if (
+          !currentAudio ||
+          currentAudio !== audioBeingFaded
+        ) {
           clearFadeTimer();
           return;
         }
 
-        const nextVolume = currentAudio.volume - volumeStep;
+        const elapsed = Date.now() - startedAt;
+        const progress = Math.min(elapsed / fadeDuration, 1);
 
-        if (nextVolume <= 0.01) {
-          currentAudio.volume = 0;
+        audioBeingFaded.volume = Math.max(
+          0,
+          startingVolume * (1 - progress)
+        );
+
+        if (progress >= 1) {
           clearFadeTimer();
-          stopAudio();
-          return;
-        }
 
-        currentAudio.volume = nextVolume;
+          audioBeingFaded.pause();
+          audioBeingFaded.currentTime = 0;
+          audioBeingFaded.volume = 1;
+
+          if (currentAudio === audioBeingFaded) {
+            currentAudio = null;
+          }
+
+          currentDescription = "";
+          clearPlayingButton();
+          setControlsEnabled(false);
+          setStatus("Nothing playing");
+        }
       }, intervalLength);
     }
 
@@ -478,6 +501,7 @@
         currentAudio = null;
       }
 
+      currentDescription = "";
       clearPlayingButton();
       setControlsEnabled(false);
 
@@ -496,6 +520,7 @@
         currentAudio = null;
       }
 
+      currentDescription = "";
       clearPlayingButton();
       setControlsEnabled(false);
       setStatus("Nothing playing");
