@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
+
+  <title>Barons Soundboard</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px 16px 120px;
+      min-height: 100vh;
+      background: #111;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 5px 0;
+      text-align: center;
+      font-size: 30px;
+    }
+
+    .subtitle {
+      margin: 0 0 28px;
+      color: #aaa;
+      text-align: center;
+    }
+
+    h2 {
+      margin: 30px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid #d71920;
+      font-size: 21px;
+    }
+
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .sound-button {
+      min-height: 76px;
+      border: 0;
+      border-radius: 13px;
+      padding: 12px 8px;
+      background: #d71920;
+      color: #fff;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .sound-button.effect {
+      background: #333;
+      border: 2px solid #555;
+    }
+
+    .sound-button.playing {
+      outline: 4px solid #fff;
+    }
+
+    .sound-button:active {
+      transform: scale(0.97);
+    }
+
+    #status {
+      margin: 30px 0 10px;
+      padding: 14px;
+      border-radius: 10px;
+      background: #222;
+      color: #ddd;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .stop-button {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      width: calc(100% - 32px);
+      max-width: 668px;
+      min-height: 68px;
+      margin: auto;
+      border: 3px solid #d71920;
+      border-radius: 14px;
+      background: #fff;
+      color: #111;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    @media (max-width: 380px) {
+      .sound-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <h1>⚾ Barons Soundboard</h1>
+    <p class="subtitle">Walk-up songs and game sounds</p>
+
+    <h2>🎵 Player Walk-Ups</h2>
+    <div id="player-buttons" class="sound-grid"></div>
+
+    <h2>🎲 Spare Walk-Ups</h2>
+    <div id="spare-buttons" class="sound-grid"></div>
+
+    <h2>📣 Game Sounds</h2>
+    <div id="effect-buttons" class="sound-grid"></div>
+
+    <div id="status">Nothing playing</div>
+  </main>
+
+  <button class="stop-button" onclick="stopAudio()">
+    ⏹ STOP ALL AUDIO
+  </button>
+
+  <script>
+    const playerSongs = [
+      { name: "Player 1", file: "audio/player-01.mp3" },
+      { name: "Player 2", file: "audio/player-02.mp3" },
+      { name: "Player 3", file: "audio/player-03.mp3" },
+      { name: "Player 4", file: "audio/player-04.mp3" },
+      { name: "Player 5", file: "audio/player-05.mp3" },
+      { name: "Player 6", file: "audio/player-06.mp3" },
+      { name: "Player 7", file: "audio/player-07.mp3" },
+      { name: "Player 8", file: "audio/player-08.mp3" },
+      { name: "Player 9", file: "audio/player-09.mp3" },
+      { name: "Player 10", file: "audio/player-10.mp3" },
+      { name: "Player 11", file: "audio/player-11.mp3" },
+      { name: "Player 12", file: "audio/player-12.mp3" },
+      { name: "Player 13", file: "audio/player-13.mp3" },
+      { name: "Player 14", file: "audio/player-14.mp3" }
+    ];
+
+    const spareSongs = [
+      { name: "Spare Song 1", file: "audio/spare-01.mp3" },
+      { name: "Spare Song 2", file: "audio/spare-02.mp3" },
+      { name: "Spare Song 3", file: "audio/spare-03.mp3" },
+      { name: "Spare Song 4", file: "audio/spare-04.mp3" },
+      { name: "Spare Song 5", file: "audio/spare-05.mp3" }
+    ];
+
+    const effects = [
+      { name: "💥 Big Hit", file: "audio/big-hit.mp3" },
+      { name: "🔥 Hype", file: "audio/hype.mp3" },
+      { name: "🎺 Charge", file: "audio/charge.mp3" },
+      { name: "🤡 Wally Trumpet", file: "audio/wally.mp3" },
+      { name: "📯 Air Horn", file: "audio/air-horn.mp3" }
+    ];
+
+    let currentAudio = null;
+    let currentButton = null;
+
+    function makeButtons(items, containerId, isEffect = false) {
+      const container = document.getElementById(containerId);
+
+      items.forEach(item => {
+        const button = document.createElement("button");
+
+        button.className = isEffect
+          ? "sound-button effect"
+          : "sound-button";
+
+        button.textContent = item.name;
+
+        button.addEventListener("click", () => {
+          playAudio(item.file, item.name, button);
+        });
+
+        container.appendChild(button);
+      });
+    }
+
+    function playAudio(file, name, button) {
+      stopAudio();
+
+      currentAudio = new Audio(file);
+      currentButton = button;
+      currentButton.classList.add("playing");
+
+      document.getElementById("status").textContent =
+        "Loading: " + name;
+
+      currentAudio.play()
+        .then(() => {
+          document.getElementById("status").textContent =
+            "Now playing: " + name;
+        })
+        .catch(error => {
+          console.error(error);
+
+          document.getElementById("status").textContent =
+            "Could not play: " + name;
+
+          clearPlayingButton();
+        });
+
+      currentAudio.addEventListener("ended", () => {
+        document.getElementById("status").textContent =
+          "Nothing playing";
+
+        clearPlayingButton();
+        currentAudio = null;
+      });
+    }
+
+    function clearPlayingButton() {
+      if (currentButton) {
+        currentButton.classList.remove("playing");
+        currentButton = null;
+      }
+    }
+
+    function stopAudio() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+
+      clearPlayingButton();
+
+      document.getElementById("status").textContent =
+        "Nothing playing";
+    }
+
+    makeButtons(playerSongs, "player-buttons");
+    makeButtons(spareSongs, "spare-buttons");
+    makeButtons(effects, "effect-buttons", true);
+  </script>
+</body>
+</html>
