@@ -391,6 +391,45 @@
       });
     }
 
+function fadeOutAudio() {
+
+    if (!currentAudio) {
+        return;
+    }
+
+    const fadeLength = 1000; // milliseconds
+    const interval = 100;
+
+    const step = currentAudio.volume / (fadeLength / interval);
+
+    const fade = setInterval(() => {
+
+        if (!currentAudio) {
+            clearInterval(fade);
+            return;
+        }
+
+        currentAudio.volume -= step;
+
+        if (currentAudio.volume <= 0) {
+
+            clearInterval(fade);
+
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            currentAudio.volume = 1;
+
+            clearPlayingButton();
+
+            currentAudio = null;
+
+            setStatus("Nothing playing");
+        }
+
+    }, interval);
+
+}
+    
     function stopAudio(updateStatus = true) {
       if (currentAudio) {
         currentAudio.pause();
