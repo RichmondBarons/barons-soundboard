@@ -428,6 +428,23 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
 
+    .batting-section {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(180px, 45%);
+      align-items: center;
+      gap: 14px;
+    }
+
+    .batting-section + .batting-section {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .batting-copy {
+      min-width: 0;
+    }
+
     .batting-label {
       margin: 0;
 
@@ -460,18 +477,12 @@
       font-style: italic;
     }
 
-    .next-up-block {
-      margin-top: 16px;
-      padding-top: 14px;
-
-      border-top: 1px solid rgba(255, 255, 255, 0.09);
-    }
-
     .next-up-name {
       margin: 5px 0 0;
 
       font-size: 17px;
       font-weight: 750;
+      line-height: 1.35;
     }
 
     .next-up-song {
@@ -480,15 +491,15 @@
       font-weight: 500;
     }
 
-    .game-controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-
-      margin-top: 16px;
+    .action-area {
+      width: 100%;
+      min-width: 0;
+      justify-self: end;
     }
 
-    .game-control-button {
+    .play-current-button,
+    .next-batter-button {
+      width: 100%;
       min-height: 58px;
       padding: 10px;
 
@@ -527,7 +538,62 @@
       color: #111217;
     }
 
-    .game-control-button:disabled {
+    .current-audio-actions {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .current-audio-actions.visible {
+      display: grid;
+    }
+
+    .play-current-button.hidden {
+      display: none;
+    }
+
+    .current-audio-button {
+      min-height: 58px;
+      padding: 8px;
+
+      border-radius: 14px;
+
+      font-size: 14px;
+      font-weight: 850;
+
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .current-fade-button {
+      border: 2px solid #efb63e;
+
+      background:
+        linear-gradient(
+          150deg,
+          rgba(239, 182, 62, 0.16),
+          rgba(40, 25, 5, 0.65)
+        );
+
+      color: #f3bd49;
+    }
+
+    .current-stop-button {
+      border: 2px solid var(--barons-red);
+
+      background:
+        linear-gradient(
+          150deg,
+          rgba(224, 25, 40, 0.16),
+          rgba(52, 3, 8, 0.72)
+        );
+
+      color: #ff4755;
+    }
+
+    .play-current-button:disabled,
+    .next-batter-button:disabled,
+    .current-audio-button:disabled {
       opacity: 0.38;
       cursor: default;
     }
@@ -1080,12 +1146,9 @@
       line-height: 1.32;
     }
 
-    .mini-stop-button,
+    .mini-control-button,
     .panel-toggle {
       min-width: 42px;
-
-      border:
-        1px solid rgba(255, 255, 255, 0.10);
 
       border-radius: 13px;
 
@@ -1098,23 +1161,40 @@
       touch-action: manipulation;
     }
 
-    .mini-stop-button {
+    .mini-control-button {
       display: none;
+      min-height: 46px;
+    }
 
-      border:
-        2px solid var(--barons-red);
+    .mini-stop-button {
+      border: 2px solid var(--barons-red);
 
       background:
         linear-gradient(
           150deg,
-          #ffffff,
-          #d9d9d9
+          rgba(224, 25, 40, 0.20),
+          rgba(52, 3, 8, 0.84)
         );
 
-      color: #111217;
+      color: #ff4755;
+    }
+
+    .mini-fade-button {
+      border: 2px solid #efb63e;
+
+      background:
+        linear-gradient(
+          150deg,
+          rgba(239, 182, 62, 0.18),
+          rgba(40, 25, 5, 0.82)
+        );
+
+      color: #f3bd49;
     }
 
     .panel-toggle {
+      border: 1px solid rgba(255, 255, 255, 0.10);
+
       background:
         linear-gradient(
           145deg,
@@ -1125,7 +1205,7 @@
       font-size: 20px;
     }
 
-    .mini-stop-button:disabled {
+    .mini-control-button:disabled {
       opacity: 0.35;
       cursor: default;
     }
@@ -1149,11 +1229,11 @@
     .bottom-panel.minimised
     .panel-top-row {
       grid-template-columns:
-        42px minmax(0, 1fr) 42px;
+        42px 42px minmax(0, 1fr) 42px;
     }
 
     .bottom-panel.minimised
-    .mini-stop-button {
+    .mini-control-button {
       display: block;
     }
 
@@ -1361,8 +1441,23 @@
           calc(100% - 24px);
       }
 
-      .game-controls {
-        grid-template-columns: 1fr;
+      .batting-section {
+        grid-template-columns: minmax(0, 1fr) minmax(135px, 46%);
+        gap: 10px;
+      }
+
+      .current-batter-name {
+        font-size: 24px;
+      }
+
+      .current-audio-actions {
+        gap: 6px;
+      }
+
+      .current-audio-button {
+        padding-left: 5px;
+        padding-right: 5px;
+        font-size: 13px;
       }
     }
   </style>
@@ -1374,7 +1469,7 @@
     <header class="app-header">
       <img
         class="club-logo"
-        src="barons-logo.PNG?v=2.0.0-beta.1"
+        src="barons-logo.PNG?v=2.0.0-beta.2"
         alt="Richmond Barons logo"
       >
 
@@ -1447,62 +1542,93 @@
       class="app-mode"
     >
       <section class="game-control-panel">
-        <p class="batting-label">
-          ⚾ Now Batting
-        </p>
 
-        <div class="current-batter-block">
-          <p
-            id="current-batter-name"
-            class="current-batter-name"
-          >
-            P1 · Cam
-          </p>
+        <div class="batting-section">
+          <div class="batting-copy">
+            <p class="batting-label">
+              ⚾ Now Batting
+            </p>
 
-          <p
-            id="current-batter-song"
-            class="current-batter-song"
-          >
-            9 to 5
-          </p>
-        </div>
+            <div class="current-batter-block">
+              <p
+                id="current-batter-name"
+                class="current-batter-name"
+              >
+                P1 · Cam
+              </p>
 
-        <div class="next-up-block">
-          <p class="batting-label">
-            Next Up
-          </p>
+              <p
+                id="current-batter-song"
+                class="current-batter-song"
+              >
+                9 to 5
+              </p>
+            </div>
+          </div>
 
-          <p
-            id="next-up-name"
-            class="next-up-name"
-          >
-            P2 · Andy
-            <span
-              id="next-up-song"
-              class="next-up-song"
+          <div class="action-area">
+            <button
+              id="play-current-button"
+              class="play-current-button"
+              type="button"
             >
-              — Anarchy in the UK
-            </span>
-          </p>
+              ▶ Play Walk-Up
+            </button>
+
+            <div
+              id="current-audio-actions"
+              class="current-audio-actions"
+            >
+              <button
+                id="current-fade-button"
+                class="current-audio-button current-fade-button"
+                type="button"
+              >
+                🌅 Fade
+              </button>
+
+              <button
+                id="current-stop-button"
+                class="current-audio-button current-stop-button"
+                type="button"
+              >
+                ⏹ Stop
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="game-controls">
-          <button
-            id="play-current-button"
-            class="game-control-button play-current-button"
-            type="button"
-          >
-            ▶ Play Walk-Up
-          </button>
+        <div class="batting-section">
+          <div class="batting-copy">
+            <p class="batting-label">
+              Next Up
+            </p>
 
-          <button
-            id="next-batter-button"
-            class="game-control-button next-batter-button"
-            type="button"
-          >
-            Next Batter ➡
-          </button>
+            <p
+              id="next-up-name"
+              class="next-up-name"
+            >
+              P2 · Andy
+              <span
+                id="next-up-song"
+                class="next-up-song"
+              >
+                — Anarchy in the UK
+              </span>
+            </p>
+          </div>
+
+          <div class="action-area">
+            <button
+              id="next-batter-button"
+              class="next-batter-button"
+              type="button"
+            >
+              Next Batter ➡
+            </button>
+          </div>
         </div>
+
       </section>
 
       <section class="lineup-section">
@@ -1542,7 +1668,7 @@
         id="version-footer"
         class="app-version"
       >
-        v2.0.0-beta.1
+        v2.0.0-beta.2
       </span>
     </footer>
   </main>
@@ -1594,12 +1720,24 @@
     <div class="panel-top-row">
       <button
         id="mini-stop-button"
-        class="mini-stop-button"
+        class="mini-control-button mini-stop-button"
         type="button"
         aria-label="Stop audio immediately"
+        title="Stop audio immediately"
         disabled
       >
         ⏹
+      </button>
+
+      <button
+        id="mini-fade-button"
+        class="mini-control-button mini-fade-button"
+        type="button"
+        aria-label="Fade audio out"
+        title="Fade audio out"
+        disabled
+      >
+        🌅
       </button>
 
       <div
@@ -1675,8 +1813,8 @@
   </div>
 
   <script>
-    const APP_VERSION = "2.0.0-beta.1";
-    const ASSET_VERSION = "2.0.0-beta.1";
+    const APP_VERSION = "2.0.0-beta.2";
+    const ASSET_VERSION = "2.0.0-beta.2";
 
     const MODE_STORAGE_KEY =
       "barons-soundboard-mode";
@@ -1856,6 +1994,7 @@
     let pendingConfirmationAction = null;
 
     let currentAudio = null;
+    let currentAudioItemId = null;
     let currentButton = null;
     let currentDescription = "";
 
@@ -1901,6 +2040,15 @@
     const playCurrentButton =
       document.getElementById("play-current-button");
 
+    const currentAudioActions =
+      document.getElementById("current-audio-actions");
+
+    const currentFadeButton =
+      document.getElementById("current-fade-button");
+
+    const currentStopButton =
+      document.getElementById("current-stop-button");
+
     const nextBatterButton =
       document.getElementById("next-batter-button");
 
@@ -1936,6 +2084,9 @@
 
     const miniStopButton =
       document.getElementById("mini-stop-button");
+
+    const miniFadeButton =
+      document.getElementById("mini-fade-button");
 
     const progressFill =
       document.getElementById("progress-fill");
@@ -1985,6 +2136,16 @@
         playCurrentBatter
       );
 
+      currentFadeButton.addEventListener(
+        "click",
+        fadeOutAudio
+      );
+
+      currentStopButton.addEventListener(
+        "click",
+        () => stopAudio()
+      );
+
       nextBatterButton.addEventListener(
         "click",
         advanceBatter
@@ -1996,6 +2157,11 @@
       );
 
       fadeButton.addEventListener(
+        "click",
+        fadeOutAudio
+      );
+
+      miniFadeButton.addEventListener(
         "click",
         fadeOutAudio
       );
@@ -3005,6 +3171,36 @@
         !currentItem.file;
 
       saveCurrentBatterIndex();
+      updateCurrentBatterAudioControls();
+    }
+
+    function updateCurrentBatterAudioControls() {
+      const currentEntryId =
+        lineup[currentBatterIndex];
+
+      const currentWalkUpIsPlaying =
+        Boolean(
+          currentAudio &&
+          currentAudioItemId &&
+          currentAudioItemId === currentEntryId
+        );
+
+      playCurrentButton.classList.toggle(
+        "hidden",
+        currentWalkUpIsPlaying
+      );
+
+      currentAudioActions.classList.toggle(
+        "visible",
+        currentWalkUpIsPlaying
+      );
+
+      currentFadeButton.disabled =
+        !currentWalkUpIsPlaying ||
+        isFading;
+
+      currentStopButton.disabled =
+        !currentWalkUpIsPlaying;
     }
 
     function playCurrentBatter() {
@@ -3142,6 +3338,7 @@
       audio.volume = masterVolume;
 
       currentAudio = audio;
+      currentAudioItemId = item.id || null;
       currentButton = button;
 
       if (currentButton) {
@@ -3164,6 +3361,7 @@
 
       resetProgress();
       setControlsEnabled(true);
+      updateCurrentBatterAudioControls();
 
       audio.addEventListener(
         "loadedmetadata",
@@ -3203,6 +3401,7 @@
           );
 
           startProgressTimer();
+          updateCurrentBatterAudioControls();
         })
         .catch((error) => {
           console.error(
@@ -3249,7 +3448,8 @@
         currentDescription
       );
 
-      fadeButton.disabled = true;
+      setControlsEnabled(true);
+      updateCurrentBatterAudioControls();
 
       fadeTimer =
         window.setInterval(() => {
@@ -3306,11 +3506,13 @@
         currentAudio = null;
       }
 
+      currentAudioItemId = null;
       currentDescription = "";
 
       clearPlayingButton();
       resetProgress();
       setControlsEnabled(false);
+      updateCurrentBatterAudioControls();
 
       if (updateStatus) {
         setStatus(
@@ -3413,9 +3615,21 @@
     }
 
     function setControlsEnabled(enabled) {
-      fadeButton.disabled = !enabled;
-      stopButton.disabled = !enabled;
-      miniStopButton.disabled = !enabled;
+      fadeButton.disabled =
+        !enabled ||
+        isFading;
+
+      miniFadeButton.disabled =
+        !enabled ||
+        isFading;
+
+      stopButton.disabled =
+        !enabled;
+
+      miniStopButton.disabled =
+        !enabled;
+
+      updateCurrentBatterAudioControls();
     }
 
     function setStatus(message) {
