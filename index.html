@@ -8,25 +8,113 @@
     content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
 
-  <meta name="theme-color" content="#111111">
+  <meta name="theme-color" content="#000000">
 
-  <title>Barons Soundboard</title>
+  <title>Richmond Barons Soundboard</title>
 
   <style>
+    :root {
+      --barons-red: #cf0011;
+      --barons-red-bright: #e01928;
+      --barons-red-dark: #740008;
+      --barons-red-deep: #260006;
+
+      --charcoal: #171a20;
+      --charcoal-light: #343a44;
+
+      --gold-dark: #6f4d08;
+      --gold: #b38219;
+      --gold-light: #d5a638;
+
+      --white: #ffffff;
+      --muted-text: #b7bac1;
+
+      --panel-border: rgba(255, 255, 255, 0.12);
+    }
+
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      background: #000000;
     }
 
     body {
       margin: 0;
       min-height: 100vh;
+
       padding:
-        20px
+        18px
         16px
-        calc(180px + env(safe-area-inset-bottom));
-      background: #111111;
-      color: #ffffff;
-      font-family: Arial, Helvetica, sans-serif;
+        calc(286px + env(safe-area-inset-bottom));
+
+      color: var(--white);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at 82% 12%,
+          rgba(207, 0, 17, 0.07) 0%,
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 18% 70%,
+          rgba(207, 0, 17, 0.045) 0%,
+          transparent 40%
+        ),
+        linear-gradient(
+          165deg,
+          #000000 0%,
+          #000000 32%,
+          #050001 58%,
+          #110003 78%,
+          #260006 100%
+        );
+
+      background-attachment: fixed;
+      transition: padding-bottom 180ms ease;
+    }
+
+    body.panel-minimised {
+      padding-bottom:
+        calc(92px + env(safe-area-inset-bottom));
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+
+      opacity: 0.17;
+
+      background-image:
+        repeating-linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.011) 0,
+          rgba(255, 255, 255, 0.011) 1px,
+          transparent 1px,
+          transparent 6px
+        );
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     .container {
@@ -35,24 +123,84 @@
       margin: 0 auto;
     }
 
-    h1 {
-      margin: 8px 0 4px;
-      text-align: center;
-      font-size: 30px;
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+
+      margin: 4px auto 28px;
+      padding: 12px 14px;
+
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 18px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.055),
+          rgba(255, 255, 255, 0.018)
+        );
+
+      box-shadow:
+        0 12px 32px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
 
-    .subtitle {
-      margin: 0 0 30px;
-      color: #aaaaaa;
-      text-align: center;
-      font-size: 17px;
+    .club-logo {
+      width: 68px;
+      height: 68px;
+      flex: 0 0 68px;
+      object-fit: contain;
+
+      filter:
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.45));
+    }
+
+    .header-copy {
+      min-width: 0;
+      text-align: left;
+    }
+
+    .club-name {
+      margin: 0;
+
+      font-size: clamp(21px, 6vw, 30px);
+      font-weight: 850;
+      line-height: 1.02;
+      letter-spacing: -0.7px;
+
+      color: var(--white);
+    }
+
+    .app-name {
+      margin: 5px 0 0;
+
+      color: #d4d6da;
+
+      font-size: 15px;
+      font-weight: 650;
+      line-height: 1.1;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
     }
 
     h2 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
       margin: 32px 0 14px;
-      padding-bottom: 9px;
-      border-bottom: 3px solid #e11822;
-      font-size: 22px;
+      padding: 0 2px 10px;
+
+      border-bottom: 2px solid rgba(207, 0, 17, 0.85);
+
+      font-size: 21px;
+      line-height: 1.2;
+      letter-spacing: -0.25px;
     }
 
     .sound-grid {
@@ -62,55 +210,125 @@
     }
 
     .sound-button {
-      min-height: 88px;
-      padding: 12px 8px;
-      border: none;
-      border-radius: 14px;
-      background: #e11822;
-      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+
+      min-height: 90px;
+      padding: 13px 9px;
+
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 15px;
+
+      background:
+        linear-gradient(
+          155deg,
+          var(--barons-red-bright) 0%,
+          var(--barons-red) 50%,
+          var(--barons-red-dark) 100%
+        );
+
+      color: var(--white);
+
+      box-shadow:
+        0 7px 16px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.20);
+
       cursor: pointer;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
+
+      transition:
+        transform 90ms ease,
+        filter 140ms ease,
+        box-shadow 140ms ease;
+    }
+
+    .sound-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+
+      pointer-events: none;
+
+      background:
+        linear-gradient(
+          125deg,
+          rgba(255, 255, 255, 0.08),
+          transparent 36%,
+          transparent 68%,
+          rgba(0, 0, 0, 0.08)
+        );
+    }
+
+    .sound-button > * {
+      position: relative;
+      z-index: 1;
     }
 
     .sound-button.spare {
-      background: #8b6508;
+      background:
+        linear-gradient(
+          155deg,
+          var(--gold-light) 0%,
+          var(--gold) 48%,
+          var(--gold-dark) 100%
+        );
+
+      color: #15100a;
     }
 
     .sound-button.effect {
-      background: #333333;
-      border: 2px solid #555555;
+      background:
+        linear-gradient(
+          155deg,
+          #3b414b 0%,
+          var(--charcoal-light) 52%,
+          #171a20 100%
+        );
+
+      border-color: rgba(255, 255, 255, 0.16);
     }
 
     .sound-button.playing {
-      outline: 4px solid #ffffff;
+      outline: 4px solid var(--white);
       outline-offset: -4px;
+
+      box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.40),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16);
     }
 
     .sound-button:active {
-      transform: scale(0.97);
+      transform: scale(0.965);
+      filter: brightness(0.92);
     }
 
     .player-name {
       display: block;
+
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 800;
       line-height: 1.15;
     }
 
     .song-title {
       display: block;
+
       margin-top: 7px;
+
       font-size: 13px;
-      font-weight: 400;
+      font-weight: 500;
       line-height: 1.2;
-      opacity: 0.9;
+
+      opacity: 0.92;
     }
 
     .single-line {
       display: block;
+
       font-size: 17px;
-      font-weight: 700;
+      font-weight: 800;
       line-height: 1.2;
     }
 
@@ -118,33 +336,270 @@
       position: fixed;
       left: 16px;
       right: 16px;
-      bottom: calc(16px + env(safe-area-inset-bottom));
+      bottom: calc(12px + env(safe-area-inset-bottom));
+
       width: calc(100% - 32px);
       max-width: 668px;
       margin: auto;
-      padding: 10px;
-      border: 2px solid #333333;
-      border-radius: 18px;
-      background: rgba(17, 17, 17, 0.97);
-      box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.45);
+      padding: 11px;
+
+      border: 1px solid var(--panel-border);
+      border-radius: 20px;
+
+      background:
+        linear-gradient(
+          160deg,
+          rgba(26, 27, 32, 0.985),
+          rgba(8, 8, 10, 0.985)
+        );
+
+      box-shadow:
+        0 -8px 28px rgba(0, 0, 0, 0.50),
+        0 12px 32px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.045);
+
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+
       z-index: 100;
+
+      transition:
+        padding 180ms ease,
+        border-radius 180ms ease;
+    }
+
+    .panel-top-row {
+      display: grid;
+      grid-template-columns: 1fr 42px;
+      align-items: stretch;
+      gap: 8px;
     }
 
     #status {
-      min-height: 62px;
-      margin-bottom: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: #222222;
-      color: #dddddd;
+      min-height: 58px;
+      padding: 9px 12px;
+
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 13px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.045),
+          rgba(255, 255, 255, 0.018)
+        );
+
+      color: #e4e5e8;
+
       text-align: center;
+      white-space: pre-line;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      white-space: pre-line;
-      font-size: 15px;
-      font-weight: 700;
-      line-height: 1.35;
+
+      font-size: 14px;
+      font-weight: 750;
+      line-height: 1.32;
+    }
+
+    .panel-toggle {
+      min-width: 42px;
+
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 13px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.07),
+          rgba(255, 255, 255, 0.025)
+        );
+
+      color: var(--white);
+
+      font-size: 20px;
+      font-weight: 800;
+
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .panel-toggle:active {
+      transform: scale(0.96);
+    }
+
+    .panel-details {
+      overflow: hidden;
+
+      max-height: 210px;
+      opacity: 1;
+
+      transition:
+        max-height 180ms ease,
+        opacity 140ms ease,
+        margin-top 180ms ease;
+    }
+
+    .bottom-panel.minimised {
+      padding: 8px;
+      border-radius: 16px;
+    }
+
+    .bottom-panel.minimised .panel-details {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+      pointer-events: none;
+    }
+
+    .bottom-panel.minimised #status {
+      min-height: 46px;
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+
+    .progress-section {
+      margin-top: 10px;
+      padding: 0 3px;
+    }
+
+    .progress-track {
+      position: relative;
+
+      width: 100%;
+      height: 8px;
+      overflow: hidden;
+
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 999px;
+
+      background: #000000;
+
+      box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.85);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+
+      border-radius: inherit;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--barons-red-dark),
+          var(--barons-red),
+          var(--barons-red-bright)
+        );
+
+      box-shadow:
+        0 0 8px rgba(207, 0, 17, 0.36);
+
+      transition: width 100ms linear;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+
+      margin-top: 5px;
+
+      color: #aeb2ba;
+
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .volume-section {
+      display: grid;
+      grid-template-columns: 24px 1fr 24px;
+      align-items: center;
+      gap: 8px;
+
+      margin: 11px 2px 12px;
+    }
+
+    .volume-icon {
+      color: #d7d9dd;
+      text-align: center;
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    .volume-slider {
+      width: 100%;
+      height: 24px;
+      margin: 0;
+
+      appearance: none;
+      -webkit-appearance: none;
+
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .volume-slider::-webkit-slider-runnable-track {
+      height: 6px;
+
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 999px;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--barons-red) 0%,
+          var(--barons-red) var(--volume-percent, 100%),
+          #000000 var(--volume-percent, 100%),
+          #000000 100%
+        );
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      width: 20px;
+      height: 20px;
+      margin-top: -8px;
+
+      appearance: none;
+      -webkit-appearance: none;
+
+      border: 3px solid var(--barons-red);
+      border-radius: 50%;
+
+      background: var(--white);
+
+      box-shadow:
+        0 2px 7px rgba(0, 0, 0, 0.45);
+    }
+
+    .volume-slider::-moz-range-track {
+      height: 6px;
+
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 999px;
+
+      background: #000000;
+    }
+
+    .volume-slider::-moz-range-progress {
+      height: 6px;
+
+      border-radius: 999px;
+
+      background: var(--barons-red);
+    }
+
+    .volume-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+
+      border: 3px solid var(--barons-red);
+      border-radius: 50%;
+
+      background: var(--white);
     }
 
     .controls {
@@ -154,76 +609,239 @@
 
     .control-button {
       flex: 1;
-      min-height: 62px;
+
+      min-height: 58px;
       padding: 10px 8px;
+
       border-radius: 14px;
-      font-size: 18px;
-      font-weight: 800;
+
+      font-size: 17px;
+      font-weight: 850;
+
       cursor: pointer;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
+
+      transition:
+        transform 90ms ease,
+        filter 140ms ease,
+        opacity 140ms ease;
     }
 
     .fade-button {
-      border: none;
-      background: #f0ad4e;
-      color: #111111;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+
+      background:
+        linear-gradient(
+          150deg,
+          #f4c35f,
+          #d89a2c 55%,
+          #9d6718
+        );
+
+      color: #17110a;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 5px 12px rgba(0, 0, 0, 0.24);
     }
 
     .stop-button {
-      border: 4px solid #e11822;
-      background: #ffffff;
-      color: #111111;
+      border: 3px solid var(--barons-red);
+
+      background:
+        linear-gradient(
+          150deg,
+          #ffffff,
+          #e7e7e7
+        );
+
+      color: #111217;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        0 5px 12px rgba(0, 0, 0, 0.24);
     }
 
     .control-button:active {
       transform: scale(0.97);
+      filter: brightness(0.93);
     }
 
     .control-button:disabled {
-      opacity: 0.45;
+      opacity: 0.38;
       cursor: default;
       transform: none;
+      filter: none;
+    }
+
+    @media (max-width: 390px) {
+      body {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .app-header {
+        gap: 11px;
+        padding-left: 11px;
+        padding-right: 11px;
+      }
+
+      .club-logo {
+        width: 60px;
+        height: 60px;
+        flex-basis: 60px;
+      }
+
+      .app-name {
+        font-size: 13px;
+        letter-spacing: 1.3px;
+      }
+
+      .sound-grid {
+        gap: 10px;
+      }
+
+      .bottom-panel {
+        left: 12px;
+        right: 12px;
+        width: calc(100% - 24px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body,
+      .bottom-panel,
+      .panel-details,
+      .sound-button,
+      .control-button,
+      .progress-fill {
+        transition: none;
+      }
     }
   </style>
 </head>
 
 <body>
   <main class="container">
-    <h1>⚾ Barons Soundboard</h1>
-    <p class="subtitle">Walk-up songs and game sounds</p>
 
-    <h2>🎵 Walk-Up Songs</h2>
-    <div id="player-buttons" class="sound-grid"></div>
+    <header class="app-header">
+      <img
+        class="club-logo"
+        src="barons-logo.PNG"
+        alt="Richmond Barons logo"
+      >
 
-    <h2>🎲 Mystery Walk-Ups</h2>
-    <div id="spare-buttons" class="sound-grid"></div>
+      <div class="header-copy">
+        <h1 class="club-name">Richmond Barons</h1>
+        <p class="app-name">Soundboard</p>
+      </div>
+    </header>
 
-    <h2>📣 Game Sounds</h2>
-    <div id="effect-buttons" class="sound-grid"></div>
+    <section>
+      <h2>🎵 Walk-Up Songs</h2>
+      <div id="player-buttons" class="sound-grid"></div>
+    </section>
+
+    <section>
+      <h2>🎲 Mystery Walk-Ups</h2>
+      <div id="spare-buttons" class="sound-grid"></div>
+    </section>
+
+    <section>
+      <h2>📣 Game Sounds</h2>
+      <div id="effect-buttons" class="sound-grid"></div>
+    </section>
+
   </main>
 
-  <div class="bottom-panel">
-    <div id="status">Nothing playing</div>
-
-    <div class="controls">
-      <button
-        id="fade-button"
-        class="control-button fade-button"
-        onclick="fadeOutAudio()"
-        disabled
-      >
-        🌅 Fade Out
-      </button>
+  <div
+    id="bottom-panel"
+    class="bottom-panel"
+  >
+    <div class="panel-top-row">
+      <div id="status">Nothing playing</div>
 
       <button
-        id="stop-button"
-        class="control-button stop-button"
-        onclick="stopAudio()"
-        disabled
+        id="panel-toggle"
+        class="panel-toggle"
+        type="button"
+        aria-label="Minimise playback controls"
+        aria-expanded="true"
+        title="Minimise controls"
       >
-        ⏹ Stop
+        ⌄
       </button>
+    </div>
+
+    <div
+      id="panel-details"
+      class="panel-details"
+    >
+      <div class="progress-section">
+        <div
+          id="progress-track"
+          class="progress-track"
+          aria-label="Song progress"
+        >
+          <div
+            id="progress-fill"
+            class="progress-fill"
+          ></div>
+        </div>
+
+        <div class="time-row">
+          <span id="elapsed-time">0:00</span>
+          <span id="total-time">0:00</span>
+        </div>
+      </div>
+
+      <div class="volume-section">
+        <span
+          class="volume-icon"
+          aria-hidden="true"
+        >
+          🔈
+        </span>
+
+        <input
+          id="volume-slider"
+          class="volume-slider"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          value="100"
+          aria-label="Master volume"
+        >
+
+        <span
+          class="volume-icon"
+          aria-hidden="true"
+        >
+          🔊
+        </span>
+      </div>
+
+      <div class="controls">
+        <button
+          id="fade-button"
+          class="control-button fade-button"
+          type="button"
+          disabled
+        >
+          🌅 Fade Out
+        </button>
+
+        <button
+          id="stop-button"
+          class="control-button stop-button"
+          type="button"
+          disabled
+        >
+          ⏹ Stop
+        </button>
+      </div>
     </div>
   </div>
 
@@ -342,19 +960,151 @@
       }
     ];
 
+    const VOLUME_STORAGE_KEY =
+      "barons-soundboard-volume";
+
+    const PANEL_STORAGE_KEY =
+      "barons-soundboard-panel-minimised";
+
     let currentAudio = null;
     let currentButton = null;
     let currentDescription = "";
-    let fadeTimer = null;
-    let isFading = false;
 
-    function createButtons(items, containerId, buttonType) {
-      const container = document.getElementById(containerId);
+    let fadeTimer = null;
+    let progressTimer = null;
+
+    let isFading = false;
+    let masterVolume = loadSavedVolume();
+
+    const bottomPanel =
+      document.getElementById("bottom-panel");
+
+    const panelToggle =
+      document.getElementById("panel-toggle");
+
+    const statusElement =
+      document.getElementById("status");
+
+    const fadeButton =
+      document.getElementById("fade-button");
+
+    const stopButton =
+      document.getElementById("stop-button");
+
+    const progressFill =
+      document.getElementById("progress-fill");
+
+    const elapsedTimeElement =
+      document.getElementById("elapsed-time");
+
+    const totalTimeElement =
+      document.getElementById("total-time");
+
+    const volumeSlider =
+      document.getElementById("volume-slider");
+
+    initialisePanelState();
+    initialiseVolumeSlider();
+
+    panelToggle.addEventListener(
+      "click",
+      togglePanel
+    );
+
+    fadeButton.addEventListener(
+      "click",
+      fadeOutAudio
+    );
+
+    stopButton.addEventListener(
+      "click",
+      () => stopAudio()
+    );
+
+    function initialisePanelState() {
+      let shouldMinimise = false;
+
+      try {
+        shouldMinimise =
+          window.localStorage.getItem(
+            PANEL_STORAGE_KEY
+          ) === "true";
+      } catch (error) {
+        console.warn(
+          "Could not load panel state:",
+          error
+        );
+      }
+
+      setPanelMinimised(shouldMinimise);
+    }
+
+    function togglePanel() {
+      setPanelMinimised(
+        !bottomPanel.classList.contains(
+          "minimised"
+        )
+      );
+    }
+
+    function setPanelMinimised(minimised) {
+      bottomPanel.classList.toggle(
+        "minimised",
+        minimised
+      );
+
+      document.body.classList.toggle(
+        "panel-minimised",
+        minimised
+      );
+
+      panelToggle.textContent =
+        minimised ? "⌃" : "⌄";
+
+      panelToggle.setAttribute(
+        "aria-label",
+        minimised
+          ? "Expand playback controls"
+          : "Minimise playback controls"
+      );
+
+      panelToggle.setAttribute(
+        "aria-expanded",
+        String(!minimised)
+      );
+
+      panelToggle.title =
+        minimised
+          ? "Expand controls"
+          : "Minimise controls";
+
+      try {
+        window.localStorage.setItem(
+          PANEL_STORAGE_KEY,
+          String(minimised)
+        );
+      } catch (error) {
+        console.warn(
+          "Could not save panel state:",
+          error
+        );
+      }
+    }
+
+    function createButtons(
+      items,
+      containerId,
+      buttonType
+    ) {
+      const container =
+        document.getElementById(containerId);
 
       items.forEach((item) => {
-        const button = document.createElement("button");
+        const button =
+          document.createElement("button");
 
         button.className = "sound-button";
+        button.type = "button";
 
         if (buttonType === "spare") {
           button.classList.add("spare");
@@ -365,19 +1115,29 @@
         }
 
         if (item.song) {
-          const playerName = document.createElement("span");
-          const songTitle = document.createElement("span");
+          const playerName =
+            document.createElement("span");
 
-          playerName.className = "player-name";
-          songTitle.className = "song-title";
+          const songTitle =
+            document.createElement("span");
 
-          playerName.textContent = item.name;
-          songTitle.textContent = item.song;
+          playerName.className =
+            "player-name";
+
+          songTitle.className =
+            "song-title";
+
+          playerName.textContent =
+            item.name;
+
+          songTitle.textContent =
+            item.song;
 
           button.appendChild(playerName);
           button.appendChild(songTitle);
         } else {
-          const label = document.createElement("span");
+          const label =
+            document.createElement("span");
 
           label.className = "single-line";
           label.textContent = item.name;
@@ -385,9 +1145,12 @@
           button.appendChild(label);
         }
 
-        button.addEventListener("click", () => {
-          playAudio(item, button);
-        });
+        button.addEventListener(
+          "click",
+          () => {
+            playAudio(item, button);
+          }
+        );
 
         container.appendChild(button);
       });
@@ -396,43 +1159,116 @@
     function playAudio(item, button) {
       stopAudio(false);
 
-      currentAudio = new Audio(item.file);
-      currentAudio.volume = 1;
+      const audio =
+        new Audio(item.file);
 
+      audio.preload = "metadata";
+      audio.volume = masterVolume;
+
+      currentAudio = audio;
       currentButton = button;
-      currentButton.classList.add("playing");
+
+      currentButton.classList.add(
+        "playing"
+      );
 
       currentDescription = item.song
         ? item.name + "\n" + item.song
         : item.name;
 
-      setStatus("Loading...\n" + currentDescription);
+      setStatus(
+        "Loading...\n" +
+        currentDescription
+      );
+
+      resetProgress();
       setControlsEnabled(true);
 
-      currentAudio.play()
+      audio.addEventListener(
+        "loadedmetadata",
+        () => {
+          if (currentAudio === audio) {
+            updateProgressDisplay();
+          }
+        }
+      );
+
+      audio.addEventListener(
+        "durationchange",
+        () => {
+          if (currentAudio === audio) {
+            updateProgressDisplay();
+          }
+        }
+      );
+
+      audio.addEventListener(
+        "timeupdate",
+        () => {
+          if (currentAudio === audio) {
+            updateProgressDisplay();
+          }
+        }
+      );
+
+      audio.addEventListener(
+        "ended",
+        () => {
+          if (currentAudio === audio) {
+            finishPlayback();
+          }
+        }
+      );
+
+      audio.addEventListener(
+        "error",
+        () => {
+          if (currentAudio !== audio) {
+            return;
+          }
+
+          const failedDescription =
+            currentDescription;
+
+          stopAudio(false);
+
+          setStatus(
+            "Audio file not found:\n" +
+            failedDescription
+          );
+        }
+      );
+
+      audio.play()
         .then(() => {
-          setStatus("🎵 NOW PLAYING\n" + currentDescription);
+          if (currentAudio !== audio) {
+            return;
+          }
+
+          setStatus(
+            "🎵 NOW PLAYING\n" +
+            currentDescription
+          );
+
+          startProgressTimer();
         })
         .catch((error) => {
-          console.error("Audio playback failed:", error);
+          console.error(
+            "Audio playback failed:",
+            error
+          );
+
+          const failedDescription =
+            currentDescription;
+
+          stopAudio(false);
 
           setStatus(
             "Could not play:\n" +
-            currentDescription +
+            failedDescription +
             "\n\nCheck that the file has been uploaded."
           );
-
-          finishPlayback();
         });
-
-      currentAudio.addEventListener("ended", () => {
-        finishPlayback();
-      });
-
-      currentAudio.addEventListener("error", () => {
-        setStatus("Audio file not found:\n" + currentDescription);
-        finishPlayback();
-      });
     }
 
     function fadeOutAudio() {
@@ -442,67 +1278,114 @@
 
       isFading = true;
 
-      const audioBeingFaded = currentAudio;
+      const audioBeingFaded =
+        currentAudio;
+
       const fadeDuration = 2000;
       const intervalLength = 50;
-      const startingVolume = audioBeingFaded.volume;
-      const startedAt = Date.now();
+
+      const startingVolume =
+        audioBeingFaded.volume;
+
+      const startedAt =
+        Date.now();
 
       setStatus(
         "🌅 FADING OUT...\n" +
         currentDescription
       );
 
-      document.getElementById("fade-button").disabled = true;
+      fadeButton.disabled = true;
 
-      fadeTimer = setInterval(() => {
-        if (
-          !currentAudio ||
-          currentAudio !== audioBeingFaded
-        ) {
-          clearFadeTimer();
-          return;
-        }
-
-        const elapsed = Date.now() - startedAt;
-        const progress = Math.min(elapsed / fadeDuration, 1);
-
-        audioBeingFaded.volume = Math.max(
-          0,
-          startingVolume * (1 - progress)
-        );
-
-        if (progress >= 1) {
-          clearFadeTimer();
-
-          audioBeingFaded.pause();
-          audioBeingFaded.currentTime = 0;
-          audioBeingFaded.volume = 1;
-
-          if (currentAudio === audioBeingFaded) {
-            currentAudio = null;
+      fadeTimer =
+        window.setInterval(() => {
+          if (
+            !currentAudio ||
+            currentAudio !== audioBeingFaded
+          ) {
+            clearFadeTimer();
+            return;
           }
 
-          currentDescription = "";
-          clearPlayingButton();
-          setControlsEnabled(false);
-          setStatus("Nothing playing");
-        }
-      }, intervalLength);
+          const elapsed =
+            Date.now() - startedAt;
+
+          const progress =
+            Math.min(
+              elapsed / fadeDuration,
+              1
+            );
+
+          audioBeingFaded.volume =
+            Math.max(
+              0,
+              startingVolume * (1 - progress)
+            );
+
+          updateProgressDisplay();
+
+          if (progress >= 1) {
+            clearFadeTimer();
+
+            audioBeingFaded.pause();
+
+            try {
+              audioBeingFaded.currentTime = 0;
+            } catch (error) {
+              console.warn(
+                "Could not reset audio position:",
+                error
+              );
+            }
+
+            audioBeingFaded.volume =
+              masterVolume;
+
+            if (
+              currentAudio === audioBeingFaded
+            ) {
+              currentAudio = null;
+            }
+
+            currentDescription = "";
+
+            clearPlayingButton();
+            stopProgressTimer();
+            resetProgress();
+            setControlsEnabled(false);
+            setStatus("Nothing playing");
+          }
+        }, intervalLength);
     }
 
-    function stopAudio(updateStatus = true) {
+    function stopAudio(
+      updateStatus = true
+    ) {
       clearFadeTimer();
+      stopProgressTimer();
 
       if (currentAudio) {
         currentAudio.pause();
-        currentAudio.currentTime = 0;
-        currentAudio.volume = 1;
+
+        try {
+          currentAudio.currentTime = 0;
+        } catch (error) {
+          console.warn(
+            "Could not reset audio position:",
+            error
+          );
+        }
+
+        currentAudio.volume =
+          masterVolume;
+
         currentAudio = null;
       }
 
       currentDescription = "";
+
       clearPlayingButton();
+      resetProgress();
       setControlsEnabled(false);
 
       if (updateStatus) {
@@ -512,23 +1395,232 @@
 
     function finishPlayback() {
       clearFadeTimer();
+      stopProgressTimer();
 
       if (currentAudio) {
         currentAudio.pause();
-        currentAudio.currentTime = 0;
-        currentAudio.volume = 1;
+
+        try {
+          currentAudio.currentTime = 0;
+        } catch (error) {
+          console.warn(
+            "Could not reset audio position:",
+            error
+          );
+        }
+
+        currentAudio.volume =
+          masterVolume;
+
         currentAudio = null;
       }
 
       currentDescription = "";
+
       clearPlayingButton();
+      resetProgress();
       setControlsEnabled(false);
       setStatus("Nothing playing");
     }
 
+    function startProgressTimer() {
+      stopProgressTimer();
+
+      progressTimer =
+        window.setInterval(() => {
+          updateProgressDisplay();
+        }, 100);
+    }
+
+    function stopProgressTimer() {
+      if (progressTimer !== null) {
+        window.clearInterval(
+          progressTimer
+        );
+
+        progressTimer = null;
+      }
+    }
+
+    function updateProgressDisplay() {
+      if (!currentAudio) {
+        resetProgress();
+        return;
+      }
+
+      const currentTime =
+        Number.isFinite(
+          currentAudio.currentTime
+        )
+          ? currentAudio.currentTime
+          : 0;
+
+      const duration =
+        Number.isFinite(
+          currentAudio.duration
+        )
+          ? currentAudio.duration
+          : 0;
+
+      const percentage =
+        duration > 0
+          ? Math.min(
+              (currentTime / duration) *
+                100,
+              100
+            )
+          : 0;
+
+      progressFill.style.width =
+        percentage + "%";
+
+      elapsedTimeElement.textContent =
+        formatTime(currentTime);
+
+      totalTimeElement.textContent =
+        formatTime(duration);
+    }
+
+    function resetProgress() {
+      progressFill.style.width =
+        "0%";
+
+      elapsedTimeElement.textContent =
+        "0:00";
+
+      totalTimeElement.textContent =
+        "0:00";
+    }
+
+    function formatTime(seconds) {
+      if (
+        !Number.isFinite(seconds) ||
+        seconds < 0
+      ) {
+        return "0:00";
+      }
+
+      const roundedSeconds =
+        Math.floor(seconds);
+
+      const minutes =
+        Math.floor(
+          roundedSeconds / 60
+        );
+
+      const remainingSeconds =
+        roundedSeconds % 60;
+
+      return (
+        minutes +
+        ":" +
+        String(
+          remainingSeconds
+        ).padStart(2, "0")
+      );
+    }
+
+    function initialiseVolumeSlider() {
+      const sliderValue =
+        Math.round(
+          masterVolume * 100
+        );
+
+      volumeSlider.value =
+        sliderValue;
+
+      updateVolumeSliderAppearance(
+        sliderValue
+      );
+
+      volumeSlider.addEventListener(
+        "input",
+        () => {
+          const volumePercentage =
+            Number(
+              volumeSlider.value
+            );
+
+          masterVolume =
+            volumePercentage / 100;
+
+          updateVolumeSliderAppearance(
+            volumePercentage
+          );
+
+          saveVolume(masterVolume);
+
+          if (
+            currentAudio &&
+            !isFading
+          ) {
+            currentAudio.volume =
+              masterVolume;
+          }
+        }
+      );
+    }
+
+    function updateVolumeSliderAppearance(
+      percentage
+    ) {
+      volumeSlider.style.setProperty(
+        "--volume-percent",
+        percentage + "%"
+      );
+    }
+
+    function loadSavedVolume() {
+      try {
+        const savedValue =
+          window.localStorage.getItem(
+            VOLUME_STORAGE_KEY
+          );
+
+        if (savedValue === null) {
+          return 1;
+        }
+
+        const parsedValue =
+          Number(savedValue);
+
+        if (
+          Number.isFinite(parsedValue) &&
+          parsedValue >= 0 &&
+          parsedValue <= 1
+        ) {
+          return parsedValue;
+        }
+      } catch (error) {
+        console.warn(
+          "Could not load saved volume:",
+          error
+        );
+      }
+
+      return 1;
+    }
+
+    function saveVolume(volume) {
+      try {
+        window.localStorage.setItem(
+          VOLUME_STORAGE_KEY,
+          String(volume)
+        );
+      } catch (error) {
+        console.warn(
+          "Could not save volume:",
+          error
+        );
+      }
+    }
+
     function clearFadeTimer() {
-      if (fadeTimer) {
-        clearInterval(fadeTimer);
+      if (fadeTimer !== null) {
+        window.clearInterval(
+          fadeTimer
+        );
+
         fadeTimer = null;
       }
 
@@ -537,18 +1629,27 @@
 
     function clearPlayingButton() {
       if (currentButton) {
-        currentButton.classList.remove("playing");
+        currentButton.classList.remove(
+          "playing"
+        );
+
         currentButton = null;
       }
     }
 
-    function setControlsEnabled(enabled) {
-      document.getElementById("fade-button").disabled = !enabled;
-      document.getElementById("stop-button").disabled = !enabled;
+    function setControlsEnabled(
+      enabled
+    ) {
+      fadeButton.disabled =
+        !enabled;
+
+      stopButton.disabled =
+        !enabled;
     }
 
     function setStatus(message) {
-      document.getElementById("status").textContent = message;
+      statusElement.textContent =
+        message;
     }
 
     createButtons(
