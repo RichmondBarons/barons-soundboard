@@ -10,7 +10,6 @@
 
   <meta name="theme-color" content="#000000">
 
-  <!-- Helps browsers revalidate the HTML itself. -->
   <meta
     http-equiv="Cache-Control"
     content="no-cache, no-store, must-revalidate"
@@ -36,13 +35,9 @@
 
       --white: #ffffff;
       --muted-text: #b7bac1;
+      --song-grey: #6f737c;
 
       --panel-border: rgba(255, 255, 255, 0.12);
-
-      /*
-        JavaScript updates this to match the playback panel's
-        real height.
-      */
       --panel-space: 286px;
     }
 
@@ -145,7 +140,7 @@
       justify-content: center;
       gap: 14px;
 
-      margin: 4px auto 28px;
+      margin: 4px auto 18px;
       padding: 12px 14px;
 
       border: 1px solid rgba(255, 255, 255, 0.09);
@@ -203,6 +198,62 @@
       line-height: 1.1;
       letter-spacing: 1.6px;
       text-transform: uppercase;
+    }
+
+    .mode-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+
+      margin-bottom: 28px;
+      padding: 5px;
+
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 15px;
+
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .mode-button {
+      min-height: 46px;
+      padding: 8px 10px;
+
+      border: 1px solid transparent;
+      border-radius: 11px;
+
+      background: transparent;
+      color: #aaaeb6;
+
+      font-size: 14px;
+      font-weight: 750;
+
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .mode-button.active {
+      border-color: rgba(255, 255, 255, 0.14);
+
+      background:
+        linear-gradient(
+          150deg,
+          var(--barons-red-bright),
+          var(--barons-red-dark)
+        );
+
+      color: var(--white);
+
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 5px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .app-mode {
+      display: none;
+    }
+
+    .app-mode.active {
+      display: block;
     }
 
     h2 {
@@ -321,10 +372,6 @@
         4px solid var(--white);
 
       outline-offset: -4px;
-
-      box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.40),
-        inset 0 1px 0 rgba(255, 255, 255, 0.16);
     }
 
     .sound-button:active {
@@ -359,6 +406,577 @@
       font-weight: 800;
       line-height: 1.2;
     }
+
+    /* Lineup mode */
+
+    .game-control-panel {
+      padding: 16px;
+
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 18px;
+
+      background:
+        linear-gradient(
+          150deg,
+          rgba(207, 0, 17, 0.14),
+          rgba(255, 255, 255, 0.025) 45%,
+          rgba(0, 0, 0, 0.30)
+        );
+
+      box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.26),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .batting-label {
+      margin: 0;
+
+      color: #b8bbc2;
+
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+
+    .current-batter-block {
+      margin-top: 8px;
+    }
+
+    .current-batter-name {
+      margin: 0;
+
+      font-size: 29px;
+      font-weight: 850;
+      line-height: 1.1;
+    }
+
+    .current-batter-song {
+      margin: 6px 0 0;
+
+      color: #c2c5ca;
+
+      font-size: 15px;
+      font-style: italic;
+    }
+
+    .next-up-block {
+      margin-top: 16px;
+      padding-top: 14px;
+
+      border-top: 1px solid rgba(255, 255, 255, 0.09);
+    }
+
+    .next-up-name {
+      margin: 5px 0 0;
+
+      font-size: 17px;
+      font-weight: 750;
+    }
+
+    .next-up-song {
+      color: #888c94;
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .game-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+
+      margin-top: 16px;
+    }
+
+    .game-control-button {
+      min-height: 58px;
+      padding: 10px;
+
+      border-radius: 14px;
+
+      font-size: 16px;
+      font-weight: 800;
+
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .play-current-button {
+      border: 1px solid rgba(255, 255, 255, 0.15);
+
+      background:
+        linear-gradient(
+          150deg,
+          var(--barons-red-bright),
+          var(--barons-red-dark)
+        );
+
+      color: var(--white);
+    }
+
+    .next-batter-button {
+      border: 2px solid var(--barons-red);
+
+      background:
+        linear-gradient(
+          150deg,
+          #ffffff,
+          #dddddd
+        );
+
+      color: #111217;
+    }
+
+    .game-control-button:disabled {
+      opacity: 0.38;
+      cursor: default;
+    }
+
+    .lineup-section {
+      margin-top: 28px;
+    }
+
+    .lineup-heading-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+
+      margin-bottom: 13px;
+    }
+
+    .lineup-heading {
+      margin: 0;
+
+      font-size: 20px;
+      font-weight: 820;
+    }
+
+    .edit-lineup-button {
+      min-height: 42px;
+      padding: 8px 12px;
+
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 11px;
+
+      background:
+        linear-gradient(
+          150deg,
+          #343943,
+          #1b1e24
+        );
+
+      color: var(--white);
+
+      font-size: 13px;
+      font-weight: 800;
+
+      cursor: pointer;
+    }
+
+    .edit-lineup-button.editing {
+      border-color: rgba(207, 0, 17, 0.72);
+
+      background:
+        linear-gradient(
+          150deg,
+          var(--barons-red-bright),
+          var(--barons-red-dark)
+        );
+    }
+
+    .editing-notice {
+      display: none;
+
+      margin-bottom: 12px;
+      padding: 10px 12px;
+
+      border: 1px solid rgba(207, 0, 17, 0.35);
+      border-radius: 11px;
+
+      background: rgba(207, 0, 17, 0.08);
+      color: #e5e5e7;
+
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .editing-notice.visible {
+      display: block;
+    }
+
+    .lineup-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .lineup-row-wrapper {
+      display: block;
+    }
+
+    .lineup-row {
+      display: grid;
+      grid-template-columns: 35px minmax(0, 1fr);
+      align-items: center;
+      gap: 9px;
+
+      min-height: 66px;
+      padding: 9px 11px;
+
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 14px;
+
+      background:
+        linear-gradient(
+          150deg,
+          rgba(255, 255, 255, 0.045),
+          rgba(255, 255, 255, 0.015)
+        );
+    }
+
+    .lineup-row.current {
+      border-color: rgba(207, 0, 17, 0.85);
+
+      box-shadow:
+        inset 4px 0 0 var(--barons-red);
+    }
+
+    .lineup-position {
+      color: #d5d6da;
+
+      text-align: center;
+
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .lineup-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 7px;
+    }
+
+    .lineup-details {
+      min-width: 0;
+    }
+
+    .lineup-player-name {
+      display: block;
+
+      overflow: hidden;
+
+      color: var(--white);
+
+      font-size: 16px;
+      font-weight: 800;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .lineup-song-name {
+      display: block;
+
+      margin-top: 3px;
+
+      overflow: hidden;
+
+      color: #777b83;
+
+      font-size: 12px;
+      font-style: italic;
+      font-weight: 500;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .lineup-edit-controls {
+      display: none;
+      grid-template-columns: 42px 42px 1fr;
+      gap: 7px;
+    }
+
+    .lineup-list.editing
+    .lineup-edit-controls {
+      display: grid;
+    }
+
+    .lineup-edit-button {
+      min-height: 38px;
+
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 9px;
+
+      background:
+        linear-gradient(
+          150deg,
+          #343943,
+          #1b1e24
+        );
+
+      color: var(--white);
+
+      font-size: 13px;
+      font-weight: 800;
+
+      cursor: pointer;
+    }
+
+    .lineup-edit-button.change {
+      background:
+        linear-gradient(
+          150deg,
+          var(--barons-red-bright),
+          var(--barons-red-dark)
+        );
+    }
+
+    .lineup-edit-button:disabled {
+      opacity: 0.30;
+      cursor: default;
+    }
+
+    .player-picker {
+      display: none;
+
+      margin-top: 7px;
+      padding: 10px;
+
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 14px;
+
+      background:
+        linear-gradient(
+          160deg,
+          rgba(28, 30, 35, 0.99),
+          rgba(8, 8, 10, 0.99)
+        );
+
+      box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .player-picker.open {
+      display: block;
+    }
+
+    .picker-search-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 42px;
+      gap: 8px;
+    }
+
+    .picker-search {
+      width: 100%;
+      min-width: 0;
+      height: 44px;
+      padding: 9px 12px;
+
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+
+      background: #090a0d;
+      color: var(--white);
+
+      font-size: 15px;
+    }
+
+    .picker-search::placeholder {
+      color: #777b83;
+    }
+
+    .picker-close {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+
+      background: #262a31;
+      color: var(--white);
+
+      font-size: 18px;
+      font-weight: 800;
+
+      cursor: pointer;
+    }
+
+    .picker-results {
+      max-height: 310px;
+      overflow-y: auto;
+
+      margin-top: 9px;
+
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .picker-group-label {
+      margin: 10px 4px 5px;
+
+      color: #8c9098;
+
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .picker-option {
+      width: 100%;
+      min-height: 46px;
+      padding: 9px 8px;
+
+      border: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+
+      background: transparent;
+      color: var(--white);
+
+      text-align: left;
+
+      cursor: pointer;
+    }
+
+    .picker-option:active {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .picker-person-icon {
+      margin-right: 4px;
+    }
+
+    .picker-position {
+      color: var(--barons-red-bright);
+      font-weight: 850;
+    }
+
+    .picker-player-name {
+      font-weight: 800;
+    }
+
+    .picker-song-name {
+      color: var(--song-grey);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .picker-spare {
+      color: #e4c16d;
+      font-weight: 780;
+    }
+
+    .picker-empty {
+      color: #a5a8ae;
+      font-weight: 750;
+    }
+
+    .picker-no-results {
+      padding: 20px 8px;
+
+      color: #8b8f97;
+
+      text-align: center;
+
+      font-size: 14px;
+    }
+
+    /* Modal */
+
+    .modal-backdrop {
+      display: none;
+
+      position: fixed;
+      inset: 0;
+
+      padding: 18px;
+
+      background: rgba(0, 0, 0, 0.74);
+
+      align-items: center;
+      justify-content: center;
+
+      z-index: 500;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .confirmation-modal {
+      width: 100%;
+      max-width: 430px;
+      padding: 18px;
+
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+
+      background:
+        linear-gradient(
+          155deg,
+          #262a31,
+          #101115
+        );
+
+      box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.55);
+    }
+
+    .modal-title {
+      margin: 0;
+
+      font-size: 21px;
+      font-weight: 850;
+    }
+
+    .modal-message {
+      margin: 13px 0 0;
+
+      color: #c7c9cd;
+
+      white-space: pre-line;
+
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+
+      margin-top: 18px;
+    }
+
+    .modal-button {
+      min-height: 48px;
+
+      border-radius: 11px;
+
+      font-size: 14px;
+      font-weight: 800;
+
+      cursor: pointer;
+    }
+
+    .modal-cancel {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+
+      background: #292d34;
+      color: var(--white);
+    }
+
+    .modal-confirm {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+
+      background:
+        linear-gradient(
+          150deg,
+          var(--barons-red-bright),
+          var(--barons-red-dark)
+        );
+
+      color: var(--white);
+    }
+
+    /* Shared footer and audio controls */
 
     .app-footer {
       margin: 34px auto 0;
@@ -420,18 +1038,11 @@
       -webkit-backdrop-filter: blur(14px);
 
       z-index: 100;
-
-      transition:
-        padding 180ms ease,
-        border-radius 180ms ease;
     }
 
     .panel-top-row {
       display: grid;
-
-      grid-template-columns:
-        1fr 42px;
-
+      grid-template-columns: 1fr 42px;
       align-items: stretch;
       gap: 8px;
     }
@@ -485,8 +1096,6 @@
 
       cursor: pointer;
       touch-action: manipulation;
-
-      -webkit-tap-highlight-color: transparent;
     }
 
     .mini-stop-button {
@@ -516,15 +1125,9 @@
       font-size: 20px;
     }
 
-    .mini-stop-button:active,
-    .panel-toggle:active {
-      transform: scale(0.96);
-    }
-
     .mini-stop-button:disabled {
       opacity: 0.35;
       cursor: default;
-      transform: none;
     }
 
     .panel-details {
@@ -535,8 +1138,7 @@
 
       transition:
         max-height 180ms ease,
-        opacity 140ms ease,
-        margin-top 180ms ease;
+        opacity 140ms ease;
     }
 
     .bottom-panel.minimised {
@@ -559,7 +1161,6 @@
     .panel-details {
       max-height: 0;
       opacity: 0;
-      margin-top: 0;
 
       pointer-events: none;
     }
@@ -567,9 +1168,7 @@
     .bottom-panel.minimised
     #status {
       min-height: 46px;
-
-      padding-top: 7px;
-      padding-bottom: 7px;
+      padding: 7px 9px;
     }
 
     .progress-section {
@@ -578,8 +1177,6 @@
     }
 
     .progress-track {
-      position: relative;
-
       width: 100%;
       height: 8px;
 
@@ -591,9 +1188,6 @@
       border-radius: 999px;
 
       background: #000000;
-
-      box-shadow:
-        inset 0 1px 3px rgba(0, 0, 0, 0.85);
     }
 
     .progress-fill {
@@ -610,9 +1204,6 @@
           var(--barons-red-bright)
         );
 
-      box-shadow:
-        0 0 8px rgba(207, 0, 17, 0.36);
-
       transition:
         width 100ms linear;
     }
@@ -627,7 +1218,6 @@
 
       font-size: 12px;
       font-variant-numeric: tabular-nums;
-      line-height: 1;
     }
 
     .volume-section {
@@ -643,12 +1233,7 @@
     }
 
     .volume-icon {
-      color: #d7d9dd;
-
       text-align: center;
-
-      font-size: 17px;
-      line-height: 1;
     }
 
     .volume-slider {
@@ -660,7 +1245,6 @@
       -webkit-appearance: none;
 
       background: transparent;
-      cursor: pointer;
     }
 
     .volume-slider::-webkit-slider-runnable-track {
@@ -686,45 +1270,10 @@
     .volume-slider::-webkit-slider-thumb {
       width: 20px;
       height: 20px;
-
       margin-top: -8px;
 
       appearance: none;
       -webkit-appearance: none;
-
-      border:
-        3px solid var(--barons-red);
-
-      border-radius: 50%;
-
-      background: var(--white);
-
-      box-shadow:
-        0 2px 7px rgba(0, 0, 0, 0.45);
-    }
-
-    .volume-slider::-moz-range-track {
-      height: 6px;
-
-      border:
-        1px solid rgba(255, 255, 255, 0.11);
-
-      border-radius: 999px;
-
-      background: #000000;
-    }
-
-    .volume-slider::-moz-range-progress {
-      height: 6px;
-
-      border-radius: 999px;
-
-      background: var(--barons-red);
-    }
-
-    .volume-slider::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
 
       border:
         3px solid var(--barons-red);
@@ -749,16 +1298,6 @@
 
       font-size: 17px;
       font-weight: 850;
-
-      cursor: pointer;
-      touch-action: manipulation;
-
-      -webkit-tap-highlight-color: transparent;
-
-      transition:
-        transform 90ms ease,
-        filter 140ms ease,
-        opacity 140ms ease;
     }
 
     .fade-button {
@@ -774,10 +1313,6 @@
         );
 
       color: #17110a;
-
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.28),
-        0 5px 12px rgba(0, 0, 0, 0.24);
     }
 
     .stop-button {
@@ -792,23 +1327,10 @@
         );
 
       color: #111217;
-
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.45),
-        0 5px 12px rgba(0, 0, 0, 0.24);
-    }
-
-    .control-button:active {
-      transform: scale(0.97);
-      filter: brightness(0.93);
     }
 
     .control-button:disabled {
       opacity: 0.38;
-      cursor: default;
-
-      transform: none;
-      filter: none;
     }
 
     @media (max-width: 390px) {
@@ -819,20 +1341,12 @@
 
       .app-header {
         gap: 11px;
-
-        padding-left: 11px;
-        padding-right: 11px;
       }
 
       .club-logo {
         width: 60px;
         height: 60px;
         flex-basis: 60px;
-      }
-
-      .app-name {
-        font-size: 13px;
-        letter-spacing: 1.3px;
       }
 
       .sound-grid {
@@ -846,16 +1360,9 @@
         width:
           calc(100% - 24px);
       }
-    }
 
-    @media (prefers-reduced-motion: reduce) {
-      body,
-      .bottom-panel,
-      .panel-details,
-      .sound-button,
-      .control-button,
-      .progress-fill {
-        transition: none;
+      .game-controls {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -866,9 +1373,8 @@
 
     <header class="app-header">
       <img
-        id="club-logo"
         class="club-logo"
-        src="barons-logo.PNG?v=1.0.0"
+        src="barons-logo.PNG?v=2.0.0-beta.1"
         alt="Richmond Barons logo"
       >
 
@@ -883,32 +1389,151 @@
       </div>
     </header>
 
-    <section>
-      <h2>🎵 Walk-Up Songs</h2>
+    <nav
+      class="mode-switcher"
+      aria-label="Soundboard mode"
+    >
+      <button
+        id="quick-mode-button"
+        class="mode-button active"
+        type="button"
+      >
+        ⚡ Quick Board
+      </button>
 
-      <div
-        id="player-buttons"
-        class="sound-grid"
-      ></div>
-    </section>
+      <button
+        id="lineup-mode-button"
+        class="mode-button"
+        type="button"
+      >
+        ⚾ Lineup Mode
+      </button>
+    </nav>
 
-    <section>
-      <h2>🎲 Mystery Walk-Ups</h2>
+    <div
+      id="quick-mode"
+      class="app-mode active"
+    >
+      <section>
+        <h2>🎵 Walk-Up Songs</h2>
 
-      <div
-        id="spare-buttons"
-        class="sound-grid"
-      ></div>
-    </section>
+        <div
+          id="player-buttons"
+          class="sound-grid"
+        ></div>
+      </section>
 
-    <section>
-      <h2>📣 Game Sounds</h2>
+      <section>
+        <h2>🎲 Mystery Walk-Ups</h2>
 
-      <div
-        id="effect-buttons"
-        class="sound-grid"
-      ></div>
-    </section>
+        <div
+          id="spare-buttons"
+          class="sound-grid"
+        ></div>
+      </section>
+
+      <section>
+        <h2>📣 Game Sounds</h2>
+
+        <div
+          id="effect-buttons"
+          class="sound-grid"
+        ></div>
+      </section>
+    </div>
+
+    <div
+      id="lineup-mode"
+      class="app-mode"
+    >
+      <section class="game-control-panel">
+        <p class="batting-label">
+          ⚾ Now Batting
+        </p>
+
+        <div class="current-batter-block">
+          <p
+            id="current-batter-name"
+            class="current-batter-name"
+          >
+            P1 · Cam
+          </p>
+
+          <p
+            id="current-batter-song"
+            class="current-batter-song"
+          >
+            9 to 5
+          </p>
+        </div>
+
+        <div class="next-up-block">
+          <p class="batting-label">
+            Next Up
+          </p>
+
+          <p
+            id="next-up-name"
+            class="next-up-name"
+          >
+            P2 · Andy
+            <span
+              id="next-up-song"
+              class="next-up-song"
+            >
+              — Anarchy in the UK
+            </span>
+          </p>
+        </div>
+
+        <div class="game-controls">
+          <button
+            id="play-current-button"
+            class="game-control-button play-current-button"
+            type="button"
+          >
+            ▶ Play Walk-Up
+          </button>
+
+          <button
+            id="next-batter-button"
+            class="game-control-button next-batter-button"
+            type="button"
+          >
+            Next Batter ➡
+          </button>
+        </div>
+      </section>
+
+      <section class="lineup-section">
+        <div class="lineup-heading-row">
+          <h2 class="lineup-heading">
+            Today’s Lineup
+          </h2>
+
+          <button
+            id="edit-lineup-button"
+            class="edit-lineup-button"
+            type="button"
+          >
+            🔓 Edit Lineup
+          </button>
+        </div>
+
+        <div
+          id="editing-notice"
+          class="editing-notice"
+        >
+          Editing is unlocked. Changes happen immediately.
+          Current and next-batter changes require confirmation.
+        </div>
+
+        <div
+          id="lineup-list"
+          class="lineup-list"
+        ></div>
+      </section>
+    </div>
 
     <footer class="app-footer">
       Richmond Barons Soundboard
@@ -917,24 +1542,61 @@
         id="version-footer"
         class="app-version"
       >
-        v1.0.0
+        v2.0.0-beta.1
       </span>
     </footer>
-
   </main>
+
+  <div
+    id="confirmation-backdrop"
+    class="modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirmation-title"
+  >
+    <div class="confirmation-modal">
+      <h3
+        id="confirmation-title"
+        class="modal-title"
+      >
+        Confirm change
+      </h3>
+
+      <p
+        id="confirmation-message"
+        class="modal-message"
+      ></p>
+
+      <div class="modal-actions">
+        <button
+          id="confirmation-cancel"
+          class="modal-button modal-cancel"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="confirmation-confirm"
+          class="modal-button modal-confirm"
+          type="button"
+        >
+          Apply Change
+        </button>
+      </div>
+    </div>
+  </div>
 
   <div
     id="bottom-panel"
     class="bottom-panel"
   >
     <div class="panel-top-row">
-
       <button
         id="mini-stop-button"
         class="mini-stop-button"
         type="button"
         aria-label="Stop audio immediately"
-        title="Emergency Stop"
         disabled
       >
         ⏹
@@ -953,24 +1615,14 @@
         type="button"
         aria-label="Minimise playback controls"
         aria-expanded="true"
-        title="Minimise controls"
       >
         ⌄
       </button>
-
     </div>
 
-    <div
-      id="panel-details"
-      class="panel-details"
-    >
+    <div class="panel-details">
       <div class="progress-section">
-
-        <div
-          id="progress-track"
-          class="progress-track"
-          aria-label="Song progress"
-        >
+        <div class="progress-track">
           <div
             id="progress-fill"
             class="progress-fill"
@@ -978,25 +1630,13 @@
         </div>
 
         <div class="time-row">
-          <span id="elapsed-time">
-            0:00
-          </span>
-
-          <span id="total-time">
-            0:00
-          </span>
+          <span id="elapsed-time">0:00</span>
+          <span id="total-time">0:00</span>
         </div>
-
       </div>
 
       <div class="volume-section">
-
-        <span
-          class="volume-icon"
-          aria-hidden="true"
-        >
-          🔈
-        </span>
+        <span class="volume-icon">🔈</span>
 
         <input
           id="volume-slider"
@@ -1009,17 +1649,10 @@
           aria-label="Master volume"
         >
 
-        <span
-          class="volume-icon"
-          aria-hidden="true"
-        >
-          🔊
-        </span>
-
+        <span class="volume-icon">🔊</span>
       </div>
 
       <div class="controls">
-
         <button
           id="fade-button"
           class="control-button fade-button"
@@ -1037,84 +1670,104 @@
         >
           ⏹ Stop
         </button>
-
       </div>
     </div>
   </div>
 
   <script>
-    /*
-      Update both values whenever you publish a meaningful
-      new release.
+    const APP_VERSION = "2.0.0-beta.1";
+    const ASSET_VERSION = "2.0.0-beta.1";
 
-      Changing ASSET_VERSION forces browsers to request new
-      versions of the logo and audio files.
-    */
-    const APP_VERSION = "1.0.0";
-    const ASSET_VERSION = "1.0.0";
+    const MODE_STORAGE_KEY =
+      "barons-soundboard-mode";
+
+    const VOLUME_STORAGE_KEY =
+      "barons-soundboard-volume";
+
+    const PANEL_STORAGE_KEY =
+      "barons-soundboard-panel-minimised";
+
+    const LINEUP_STORAGE_KEY =
+      "barons-soundboard-lineup";
+
+    const BATTER_STORAGE_KEY =
+      "barons-soundboard-current-batter";
 
     const playerSongs = [
       {
+        id: "cam",
         name: "Cam",
         song: "9 to 5",
         file: "audio/cam.mp3"
       },
       {
+        id: "andy",
         name: "Andy",
         song: "Anarchy in the UK",
         file: "audio/andy.mp3"
       },
       {
+        id: "keith",
         name: "Keith",
         song: "The Chemical Brothers",
         file: "audio/keith.mp3"
       },
       {
+        id: "bailey",
         name: "Bailey",
         song: "Neat Neat Neat",
         file: "audio/bailey.mp3"
       },
       {
+        id: "cj",
         name: "CJ",
         song: "Say When",
         file: "audio/cj.mp3"
       },
       {
+        id: "jackson",
         name: "Jackson",
         song: "Layla",
         file: "audio/jackson.mp3"
       },
       {
+        id: "gigi",
         name: "Gigi",
         song: "Work Out",
         file: "audio/gigi.mp3"
       },
       {
+        id: "leon",
         name: "Leon",
         song: "SexyBack",
         file: "audio/leon.mp3"
       },
       {
+        id: "woody",
         name: "Woody",
         song: "Genesis",
         file: "audio/woody.mp3"
       },
       {
+        id: "adam",
         name: "Adam",
         song: "Gasoline",
         file: "audio/adam.mp3"
       },
       {
+        id: "matt",
         name: "Matt",
         song: "Cotton Eye Joe",
         file: "audio/matt.mp3"
       },
       {
+        id: "paul",
         name: "Paul",
         song: "The Phoenix",
         file: "audio/paul.mp3"
       },
       {
+        id: "jeewoo",
         name: "Jeewoo",
         song: "Yiruma",
         file: "audio/jeewoo.mp3"
@@ -1123,24 +1776,39 @@
 
     const spareSongs = [
       {
-        name: "🎲 Spare 1",
-        file: "audio/spare-1.mp3"
+        id: "spare-1",
+        name: "Spare 1",
+        song: "Mystery Walk-Up",
+        file: "audio/spare-1.mp3",
+        type: "spare"
       },
       {
-        name: "🎲 Spare 2",
-        file: "audio/spare-2.mp3"
+        id: "spare-2",
+        name: "Spare 2",
+        song: "Mystery Walk-Up",
+        file: "audio/spare-2.mp3",
+        type: "spare"
       },
       {
-        name: "🎲 Spare 3",
-        file: "audio/spare-3.mp3"
+        id: "spare-3",
+        name: "Spare 3",
+        song: "Mystery Walk-Up",
+        file: "audio/spare-3.mp3",
+        type: "spare"
       },
       {
-        name: "🎲 Spare 4",
-        file: "audio/spare-4.mp3"
+        id: "spare-4",
+        name: "Spare 4",
+        song: "Mystery Walk-Up",
+        file: "audio/spare-4.mp3",
+        type: "spare"
       },
       {
-        name: "🎲 Spare 5",
-        file: "audio/spare-5.mp3"
+        id: "spare-5",
+        name: "Spare 5",
+        song: "Mystery Walk-Up",
+        file: "audio/spare-5.mp3",
+        type: "spare"
       }
     ];
 
@@ -1167,11 +1835,25 @@
       }
     ];
 
-    const VOLUME_STORAGE_KEY =
-      "barons-soundboard-volume";
+    const defaultLineup = [
+      "cam",
+      "andy",
+      "keith",
+      "bailey",
+      "cj",
+      "jackson",
+      "gigi",
+      "leon",
+      "woody"
+    ];
 
-    const PANEL_STORAGE_KEY =
-      "barons-soundboard-panel-minimised";
+    let currentMode = loadMode();
+    let lineup = loadLineup();
+    let currentBatterIndex = loadCurrentBatterIndex();
+    let lineupEditing = false;
+    let openPickerIndex = null;
+
+    let pendingConfirmationAction = null;
 
     let currentAudio = null;
     let currentButton = null;
@@ -1183,290 +1865,227 @@
     let isFading = false;
     let masterVolume = loadSavedVolume();
 
+    const quickModeButton =
+      document.getElementById("quick-mode-button");
+
+    const lineupModeButton =
+      document.getElementById("lineup-mode-button");
+
+    const quickMode =
+      document.getElementById("quick-mode");
+
+    const lineupMode =
+      document.getElementById("lineup-mode");
+
+    const lineupList =
+      document.getElementById("lineup-list");
+
+    const editLineupButton =
+      document.getElementById("edit-lineup-button");
+
+    const editingNotice =
+      document.getElementById("editing-notice");
+
+    const currentBatterName =
+      document.getElementById("current-batter-name");
+
+    const currentBatterSong =
+      document.getElementById("current-batter-song");
+
+    const nextUpName =
+      document.getElementById("next-up-name");
+
+    const nextUpSong =
+      document.getElementById("next-up-song");
+
+    const playCurrentButton =
+      document.getElementById("play-current-button");
+
+    const nextBatterButton =
+      document.getElementById("next-batter-button");
+
+    const confirmationBackdrop =
+      document.getElementById("confirmation-backdrop");
+
+    const confirmationTitle =
+      document.getElementById("confirmation-title");
+
+    const confirmationMessage =
+      document.getElementById("confirmation-message");
+
+    const confirmationCancel =
+      document.getElementById("confirmation-cancel");
+
+    const confirmationConfirm =
+      document.getElementById("confirmation-confirm");
+
     const bottomPanel =
-      document.getElementById(
-        "bottom-panel"
-      );
+      document.getElementById("bottom-panel");
 
     const panelToggle =
-      document.getElementById(
-        "panel-toggle"
-      );
+      document.getElementById("panel-toggle");
 
     const statusElement =
-      document.getElementById(
-        "status"
-      );
+      document.getElementById("status");
 
     const fadeButton =
-      document.getElementById(
-        "fade-button"
-      );
+      document.getElementById("fade-button");
 
     const stopButton =
-      document.getElementById(
-        "stop-button"
-      );
+      document.getElementById("stop-button");
 
     const miniStopButton =
-      document.getElementById(
-        "mini-stop-button"
-      );
+      document.getElementById("mini-stop-button");
 
     const progressFill =
-      document.getElementById(
-        "progress-fill"
-      );
+      document.getElementById("progress-fill");
 
     const elapsedTimeElement =
-      document.getElementById(
-        "elapsed-time"
-      );
+      document.getElementById("elapsed-time");
 
     const totalTimeElement =
-      document.getElementById(
-        "total-time"
-      );
+      document.getElementById("total-time");
 
     const volumeSlider =
-      document.getElementById(
-        "volume-slider"
-      );
+      document.getElementById("volume-slider");
 
-    const versionFooter =
+    initialise();
+
+    function initialise() {
       document.getElementById(
         "version-footer"
+      ).textContent = "v" + APP_VERSION;
+
+      createQuickBoardButtons();
+      initialiseMode();
+      initialisePanelState();
+      initialiseVolumeSlider();
+      initialisePanelSpacing();
+
+      renderLineup();
+      updateGamePanel();
+
+      quickModeButton.addEventListener(
+        "click",
+        () => setMode("quick")
       );
 
-    initialiseVersion();
-    initialisePanelState();
-    initialiseVolumeSlider();
-    initialisePanelSpacing();
-
-    panelToggle.addEventListener(
-      "click",
-      togglePanel
-    );
-
-    fadeButton.addEventListener(
-      "click",
-      fadeOutAudio
-    );
-
-    stopButton.addEventListener(
-      "click",
-      () => stopAudio()
-    );
-
-    miniStopButton.addEventListener(
-      "click",
-      () => stopAudio()
-    );
-
-    window.addEventListener(
-      "resize",
-      updatePanelSpacing
-    );
-
-    window.addEventListener(
-      "orientationchange",
-      () => {
-        window.setTimeout(
-          updatePanelSpacing,
-          150
-        );
-      }
-    );
-
-    function initialiseVersion() {
-      versionFooter.textContent =
-        "v" + APP_VERSION;
-    }
-
-    function versionedPath(path) {
-      const separator =
-        path.includes("?")
-          ? "&"
-          : "?";
-
-      return (
-        path +
-        separator +
-        "v=" +
-        encodeURIComponent(
-          ASSET_VERSION
-        )
-      );
-    }
-
-    function initialisePanelState() {
-      let shouldMinimise = false;
-
-      try {
-        shouldMinimise =
-          window.localStorage.getItem(
-            PANEL_STORAGE_KEY
-          ) === "true";
-      } catch (error) {
-        console.warn(
-          "Could not load panel state:",
-          error
-        );
-      }
-
-      setPanelMinimised(
-        shouldMinimise
-      );
-    }
-
-    function togglePanel() {
-      setPanelMinimised(
-        !bottomPanel.classList.contains(
-          "minimised"
-        )
-      );
-    }
-
-    function setPanelMinimised(
-      minimised
-    ) {
-      bottomPanel.classList.toggle(
-        "minimised",
-        minimised
+      lineupModeButton.addEventListener(
+        "click",
+        () => setMode("lineup")
       );
 
-      panelToggle.textContent =
-        minimised
-          ? "⌃"
-          : "⌄";
-
-      panelToggle.setAttribute(
-        "aria-label",
-        minimised
-          ? "Expand playback controls"
-          : "Minimise playback controls"
+      editLineupButton.addEventListener(
+        "click",
+        toggleLineupEditing
       );
 
-      panelToggle.setAttribute(
-        "aria-expanded",
-        String(!minimised)
+      playCurrentButton.addEventListener(
+        "click",
+        playCurrentBatter
       );
 
-      panelToggle.title =
-        minimised
-          ? "Expand controls"
-          : "Minimise controls";
+      nextBatterButton.addEventListener(
+        "click",
+        advanceBatter
+      );
 
-      try {
-        window.localStorage.setItem(
-          PANEL_STORAGE_KEY,
-          String(minimised)
-        );
-      } catch (error) {
-        console.warn(
-          "Could not save panel state:",
-          error
-        );
-      }
+      panelToggle.addEventListener(
+        "click",
+        togglePanel
+      );
 
-      /*
-        Wait until the minimise animation/layout has started,
-        then recalculate the required page space.
-      */
-      window.requestAnimationFrame(
+      fadeButton.addEventListener(
+        "click",
+        fadeOutAudio
+      );
+
+      stopButton.addEventListener(
+        "click",
+        () => stopAudio()
+      );
+
+      miniStopButton.addEventListener(
+        "click",
+        () => stopAudio()
+      );
+
+      confirmationCancel.addEventListener(
+        "click",
+        closeConfirmation
+      );
+
+      confirmationConfirm.addEventListener(
+        "click",
+        applyPendingConfirmation
+      );
+
+      confirmationBackdrop.addEventListener(
+        "click",
+        (event) => {
+          if (
+            event.target === confirmationBackdrop
+          ) {
+            closeConfirmation();
+          }
+        }
+      );
+
+      window.addEventListener(
+        "resize",
         updatePanelSpacing
       );
+    }
 
-      window.setTimeout(
-        updatePanelSpacing,
-        220
+    function createQuickBoardButtons() {
+      createSoundButtons(
+        playerSongs,
+        "player-buttons",
+        "player"
+      );
+
+      createSoundButtons(
+        spareSongs,
+        "spare-buttons",
+        "spare"
+      );
+
+      createSoundButtons(
+        effects,
+        "effect-buttons",
+        "effect"
       );
     }
 
-    function initialisePanelSpacing() {
-      updatePanelSpacing();
-
-      if (
-        "ResizeObserver" in window
-      ) {
-        const observer =
-          new ResizeObserver(() => {
-            updatePanelSpacing();
-          });
-
-        observer.observe(
-          bottomPanel
-        );
-      }
-    }
-
-    function updatePanelSpacing() {
-      const panelHeight =
-        bottomPanel.getBoundingClientRect()
-          .height;
-
-      /*
-        The additional space gives the footer and final buttons
-        breathing room above the fixed panel.
-      */
-      const reservedSpace =
-        Math.ceil(panelHeight + 28);
-
-      document.documentElement.style
-        .setProperty(
-          "--panel-space",
-          reservedSpace + "px"
-        );
-    }
-
-    function createButtons(
+    function createSoundButtons(
       items,
       containerId,
       buttonType
     ) {
       const container =
-        document.getElementById(
-          containerId
-        );
+        document.getElementById(containerId);
 
       items.forEach((item) => {
         const button =
-          document.createElement(
-            "button"
-          );
+          document.createElement("button");
 
-        button.className =
-          "sound-button";
+        button.className = "sound-button";
+        button.type = "button";
 
-        button.type =
-          "button";
-
-        if (
-          buttonType === "spare"
-        ) {
-          button.classList.add(
-            "spare"
-          );
+        if (buttonType === "spare") {
+          button.classList.add("spare");
         }
 
-        if (
-          buttonType === "effect"
-        ) {
-          button.classList.add(
-            "effect"
-          );
+        if (buttonType === "effect") {
+          button.classList.add("effect");
         }
 
-        if (item.song) {
+        if (item.song && buttonType === "player") {
           const playerName =
-            document.createElement(
-              "span"
-            );
+            document.createElement("span");
 
           const songTitle =
-            document.createElement(
-              "span"
-            );
+            document.createElement("span");
 
           playerName.className =
             "player-name";
@@ -1480,74 +2099,1056 @@
           songTitle.textContent =
             item.song;
 
-          button.appendChild(
-            playerName
-          );
-
-          button.appendChild(
-            songTitle
-          );
+          button.appendChild(playerName);
+          button.appendChild(songTitle);
         } else {
           const label =
-            document.createElement(
-              "span"
-            );
+            document.createElement("span");
 
           label.className =
             "single-line";
 
           label.textContent =
-            item.name;
+            buttonType === "spare"
+              ? "🎲 " + item.name
+              : item.name;
 
-          button.appendChild(
-            label
-          );
+          button.appendChild(label);
         }
 
         button.addEventListener(
           "click",
-          () => {
-            playAudio(
-              item,
-              button
-            );
-          }
+          () => playAudio(item, button)
         );
 
-        container.appendChild(
-          button
-        );
+        container.appendChild(button);
       });
     }
 
-    function playAudio(
-      item,
-      button
+    function initialiseMode() {
+      setMode(currentMode, false);
+    }
+
+    function setMode(mode, save = true) {
+      currentMode =
+        mode === "lineup"
+          ? "lineup"
+          : "quick";
+
+      quickMode.classList.toggle(
+        "active",
+        currentMode === "quick"
+      );
+
+      lineupMode.classList.toggle(
+        "active",
+        currentMode === "lineup"
+      );
+
+      quickModeButton.classList.toggle(
+        "active",
+        currentMode === "quick"
+      );
+
+      lineupModeButton.classList.toggle(
+        "active",
+        currentMode === "lineup"
+      );
+
+      if (save) {
+        try {
+          localStorage.setItem(
+            MODE_STORAGE_KEY,
+            currentMode
+          );
+        } catch (error) {
+          console.warn(
+            "Could not save mode:",
+            error
+          );
+        }
+      }
+
+      requestAnimationFrame(
+        updatePanelSpacing
+      );
+    }
+
+    function loadMode() {
+      try {
+        return (
+          localStorage.getItem(
+            MODE_STORAGE_KEY
+          ) || "quick"
+        );
+      } catch (error) {
+        return "quick";
+      }
+    }
+
+    function toggleLineupEditing() {
+      lineupEditing =
+        !lineupEditing;
+
+      if (!lineupEditing) {
+        openPickerIndex = null;
+      }
+
+      renderLineup();
+    }
+
+    function renderLineup() {
+      lineupList.innerHTML = "";
+
+      lineupList.classList.toggle(
+        "editing",
+        lineupEditing
+      );
+
+      editLineupButton.classList.toggle(
+        "editing",
+        lineupEditing
+      );
+
+      editLineupButton.textContent =
+        lineupEditing
+          ? "🔒 Lock Lineup"
+          : "🔓 Edit Lineup";
+
+      editingNotice.classList.toggle(
+        "visible",
+        lineupEditing
+      );
+
+      lineup.forEach((entryId, index) => {
+        const wrapper =
+          document.createElement("div");
+
+        wrapper.className =
+          "lineup-row-wrapper";
+
+        const row =
+          document.createElement("div");
+
+        row.className =
+          "lineup-row";
+
+        if (index === currentBatterIndex) {
+          row.classList.add("current");
+        }
+
+        const position =
+          document.createElement("div");
+
+        position.className =
+          "lineup-position";
+
+        position.textContent =
+          "P" + (index + 1);
+
+        const main =
+          document.createElement("div");
+
+        main.className =
+          "lineup-main";
+
+        const details =
+          document.createElement("div");
+
+        details.className =
+          "lineup-details";
+
+        const item =
+          getLibraryItem(entryId);
+
+        const name =
+          document.createElement("span");
+
+        name.className =
+          "lineup-player-name";
+
+        name.textContent =
+          item
+            ? item.name
+            : "Empty Slot";
+
+        const song =
+          document.createElement("span");
+
+        song.className =
+          "lineup-song-name";
+
+        song.textContent =
+          item
+            ? item.song
+            : "No walk-up selected";
+
+        details.appendChild(name);
+        details.appendChild(song);
+
+        const controls =
+          document.createElement("div");
+
+        controls.className =
+          "lineup-edit-controls";
+
+        const up =
+          createLineupEditButton(
+            "↑",
+            "Move up",
+            index === 0
+          );
+
+        const down =
+          createLineupEditButton(
+            "↓",
+            "Move down",
+            index === lineup.length - 1
+          );
+
+        const change =
+          createLineupEditButton(
+            "Change",
+            "Change player",
+            false,
+            "change"
+          );
+
+        up.addEventListener(
+          "click",
+          () => proposeMove(index, index - 1)
+        );
+
+        down.addEventListener(
+          "click",
+          () => proposeMove(index, index + 1)
+        );
+
+        change.addEventListener(
+          "click",
+          () => togglePicker(index)
+        );
+
+        controls.appendChild(up);
+        controls.appendChild(down);
+        controls.appendChild(change);
+
+        main.appendChild(details);
+        main.appendChild(controls);
+
+        row.appendChild(position);
+        row.appendChild(main);
+
+        wrapper.appendChild(row);
+
+        if (
+          lineupEditing &&
+          openPickerIndex === index
+        ) {
+          wrapper.appendChild(
+            buildPlayerPicker(index)
+          );
+        }
+
+        lineupList.appendChild(wrapper);
+      });
+
+      updateGamePanel();
+    }
+
+    function createLineupEditButton(
+      text,
+      label,
+      disabled,
+      extraClass = ""
     ) {
+      const button =
+        document.createElement("button");
+
+      button.className =
+        "lineup-edit-button";
+
+      if (extraClass) {
+        button.classList.add(extraClass);
+      }
+
+      button.type = "button";
+      button.textContent = text;
+      button.disabled = disabled;
+      button.setAttribute(
+        "aria-label",
+        label
+      );
+
+      return button;
+    }
+
+    function togglePicker(index) {
+      openPickerIndex =
+        openPickerIndex === index
+          ? null
+          : index;
+
+      renderLineup();
+
+      if (openPickerIndex !== null) {
+        requestAnimationFrame(() => {
+          const input =
+            document.querySelector(
+              ".player-picker.open .picker-search"
+            );
+
+          if (input) {
+            input.focus({
+              preventScroll: true
+            });
+          }
+        });
+      }
+    }
+
+    function buildPlayerPicker(targetIndex) {
+      const picker =
+        document.createElement("div");
+
+      picker.className =
+        "player-picker open";
+
+      const searchRow =
+        document.createElement("div");
+
+      searchRow.className =
+        "picker-search-row";
+
+      const search =
+        document.createElement("input");
+
+      search.className =
+        "picker-search";
+
+      search.type = "search";
+
+      search.placeholder =
+        "Search player or song";
+
+      search.setAttribute(
+        "aria-label",
+        "Search player or song"
+      );
+
+      const close =
+        document.createElement("button");
+
+      close.className =
+        "picker-close";
+
+      close.type = "button";
+      close.textContent = "✕";
+
+      close.addEventListener(
+        "click",
+        () => {
+          openPickerIndex = null;
+          renderLineup();
+        }
+      );
+
+      const results =
+        document.createElement("div");
+
+      results.className =
+        "picker-results";
+
+      function renderResults() {
+        const query =
+          search.value
+            .trim()
+            .toLowerCase();
+
+        results.innerHTML = "";
+
+        const matchingPlayers =
+          [...playerSongs]
+            .sort((a, b) =>
+              a.name.localeCompare(b.name)
+            )
+            .filter((player) => {
+              return (
+                player.name
+                  .toLowerCase()
+                  .includes(query) ||
+                player.song
+                  .toLowerCase()
+                  .includes(query)
+              );
+            });
+
+        const matchingSpares =
+          spareSongs.filter((spare) => {
+            return (
+              spare.name
+                .toLowerCase()
+                .includes(query) ||
+              spare.song
+                .toLowerCase()
+                .includes(query) ||
+              "spare mystery"
+                .includes(query)
+            );
+          });
+
+        if (matchingPlayers.length > 0) {
+          results.appendChild(
+            createPickerGroupLabel(
+              "Players"
+            )
+          );
+
+          matchingPlayers.forEach(
+            (player) => {
+              results.appendChild(
+                createPlayerPickerOption(
+                  player,
+                  targetIndex
+                )
+              );
+            }
+          );
+        }
+
+        if (matchingSpares.length > 0) {
+          results.appendChild(
+            createPickerGroupLabel(
+              "Mystery / Spare Songs"
+            )
+          );
+
+          matchingSpares.forEach(
+            (spare) => {
+              results.appendChild(
+                createSparePickerOption(
+                  spare,
+                  targetIndex
+                )
+              );
+            }
+          );
+        }
+
+        const emptyMatches =
+          "empty slot no player"
+            .includes(query);
+
+        if (
+          query === "" ||
+          emptyMatches
+        ) {
+          results.appendChild(
+            createPickerGroupLabel(
+              "Other"
+            )
+          );
+
+          results.appendChild(
+            createEmptyPickerOption(
+              targetIndex
+            )
+          );
+        }
+
+        if (
+          matchingPlayers.length === 0 &&
+          matchingSpares.length === 0 &&
+          !emptyMatches
+        ) {
+          const noResults =
+            document.createElement("div");
+
+          noResults.className =
+            "picker-no-results";
+
+          noResults.textContent =
+            "No players or songs found.";
+
+          results.appendChild(noResults);
+        }
+      }
+
+      search.addEventListener(
+        "input",
+        renderResults
+      );
+
+      searchRow.appendChild(search);
+      searchRow.appendChild(close);
+
+      picker.appendChild(searchRow);
+      picker.appendChild(results);
+
+      renderResults();
+
+      return picker;
+    }
+
+    function createPickerGroupLabel(text) {
+      const label =
+        document.createElement("div");
+
+      label.className =
+        "picker-group-label";
+
+      label.textContent = text;
+
+      return label;
+    }
+
+    function createPlayerPickerOption(
+      player,
+      targetIndex
+    ) {
+      const button =
+        document.createElement("button");
+
+      button.className =
+        "picker-option";
+
+      button.type = "button";
+
+      const existingIndex =
+        lineup.indexOf(player.id);
+
+      const positionText =
+        existingIndex >= 0
+          ? ` <span class="picker-position">[P${existingIndex + 1}]</span>`
+          : "";
+
+      button.innerHTML =
+        `<span class="picker-person-icon">👤</span>` +
+        positionText +
+        ` <span class="picker-player-name">${escapeHtml(player.name)}</span>` +
+        ` <span> - </span>` +
+        `<span class="picker-song-name">${escapeHtml(player.song)}</span>`;
+
+      button.addEventListener(
+        "click",
+        () => {
+          proposePlayerSelection(
+            targetIndex,
+            player.id
+          );
+        }
+      );
+
+      return button;
+    }
+
+    function createSparePickerOption(
+      spare,
+      targetIndex
+    ) {
+      const button =
+        document.createElement("button");
+
+      button.className =
+        "picker-option";
+
+      button.type = "button";
+
+      button.innerHTML =
+        `<span class="picker-spare">🎲 ${escapeHtml(spare.name)}</span>`;
+
+      button.addEventListener(
+        "click",
+        () => {
+          proposeReplacement(
+            targetIndex,
+            spare.id
+          );
+        }
+      );
+
+      return button;
+    }
+
+    function createEmptyPickerOption(
+      targetIndex
+    ) {
+      const button =
+        document.createElement("button");
+
+      button.className =
+        "picker-option";
+
+      button.type = "button";
+
+      button.innerHTML =
+        `<span class="picker-empty">⭕ Empty Slot</span>`;
+
+      button.addEventListener(
+        "click",
+        () => {
+          proposeReplacement(
+            targetIndex,
+            null
+          );
+        }
+      );
+
+      return button;
+    }
+
+    function proposePlayerSelection(
+      targetIndex,
+      playerId
+    ) {
+      const existingIndex =
+        lineup.indexOf(playerId);
+
+      if (
+        existingIndex >= 0 &&
+        existingIndex !== targetIndex
+      ) {
+        proposeSwap(
+          targetIndex,
+          existingIndex
+        );
+
+        return;
+      }
+
+      proposeReplacement(
+        targetIndex,
+        playerId
+      );
+    }
+
+    function proposeSwap(
+      firstIndex,
+      secondIndex
+    ) {
+      const proposed =
+        [...lineup];
+
+      [
+        proposed[firstIndex],
+        proposed[secondIndex]
+      ] = [
+        proposed[secondIndex],
+        proposed[firstIndex]
+      ];
+
+      const firstItem =
+        getLibraryItem(
+          lineup[firstIndex]
+        );
+
+      const secondItem =
+        getLibraryItem(
+          lineup[secondIndex]
+        );
+
+      const warning =
+        buildActiveChangeWarning(proposed);
+
+      const message =
+        `${secondItem?.name || "Empty Slot"} is already batting P${secondIndex + 1}.\n\n` +
+        `Swap P${firstIndex + 1} and P${secondIndex + 1}?\n\n` +
+        `${firstItem?.name || "Empty Slot"} ↔ ${secondItem?.name || "Empty Slot"}` +
+        warning;
+
+      requestConfirmation(
+        "Swap lineup positions?",
+        message,
+        "Swap Players",
+        () => {
+          lineup = proposed;
+          completeLineupChange();
+        },
+        warning !== ""
+      );
+    }
+
+    function proposeReplacement(
+      targetIndex,
+      replacementId
+    ) {
+      const proposed =
+        [...lineup];
+
+      proposed[targetIndex] =
+        replacementId;
+
+      const oldItem =
+        getLibraryItem(
+          lineup[targetIndex]
+        );
+
+      const newItem =
+        getLibraryItem(
+          replacementId
+        );
+
+      const warning =
+        buildActiveChangeWarning(proposed);
+
+      const action = () => {
+        lineup = proposed;
+        completeLineupChange();
+      };
+
+      if (warning) {
+        requestConfirmation(
+          "Change active batting order?",
+          `${oldItem?.name || "Empty Slot"} → ${newItem?.name || "Empty Slot"}` +
+          warning,
+          "Apply Change",
+          action,
+          true
+        );
+      } else {
+        action();
+      }
+    }
+
+    function proposeMove(
+      fromIndex,
+      toIndex
+    ) {
+      if (
+        toIndex < 0 ||
+        toIndex >= lineup.length
+      ) {
+        return;
+      }
+
+      const proposed =
+        [...lineup];
+
+      [
+        proposed[fromIndex],
+        proposed[toIndex]
+      ] = [
+        proposed[toIndex],
+        proposed[fromIndex]
+      ];
+
+      const warning =
+        buildActiveChangeWarning(proposed);
+
+      const action = () => {
+        lineup = proposed;
+        completeLineupChange();
+      };
+
+      if (warning) {
+        requestConfirmation(
+          "Change active batting order?",
+          `Move P${fromIndex + 1} to P${toIndex + 1}?` +
+          warning,
+          "Apply Change",
+          action,
+          true
+        );
+      } else {
+        action();
+      }
+    }
+
+    function buildActiveChangeWarning(
+      proposedLineup
+    ) {
+      const nextIndex =
+        (currentBatterIndex + 1) %
+        lineup.length;
+
+      const currentBefore =
+        getLibraryItem(
+          lineup[currentBatterIndex]
+        );
+
+      const currentAfter =
+        getLibraryItem(
+          proposedLineup[
+            currentBatterIndex
+          ]
+        );
+
+      const nextBefore =
+        getLibraryItem(
+          lineup[nextIndex]
+        );
+
+      const nextAfter =
+        getLibraryItem(
+          proposedLineup[nextIndex]
+        );
+
+      const changes = [];
+
+      if (
+        getItemName(currentBefore) !==
+        getItemName(currentAfter)
+      ) {
+        changes.push(
+          `Now Batting: ${getItemName(currentBefore)} → ${getItemName(currentAfter)}`
+        );
+      }
+
+      if (
+        getItemName(nextBefore) !==
+        getItemName(nextAfter)
+      ) {
+        changes.push(
+          `Next Up: ${getItemName(nextBefore)} → ${getItemName(nextAfter)}`
+        );
+      }
+
+      if (changes.length === 0) {
+        return "";
+      }
+
+      return (
+        "\n\nThis will update:\n" +
+        changes.join("\n")
+      );
+    }
+
+    function requestConfirmation(
+      title,
+      message,
+      confirmText,
+      action,
+      required
+    ) {
+      if (!required) {
+        action();
+        return;
+      }
+
+      confirmationTitle.textContent =
+        title;
+
+      confirmationMessage.textContent =
+        message;
+
+      confirmationConfirm.textContent =
+        confirmText;
+
+      pendingConfirmationAction =
+        action;
+
+      confirmationBackdrop.classList.add(
+        "open"
+      );
+    }
+
+    function applyPendingConfirmation() {
+      const action =
+        pendingConfirmationAction;
+
+      closeConfirmation();
+
+      if (action) {
+        action();
+      }
+    }
+
+    function closeConfirmation() {
+      confirmationBackdrop.classList.remove(
+        "open"
+      );
+
+      pendingConfirmationAction =
+        null;
+    }
+
+    function completeLineupChange() {
+      openPickerIndex = null;
+
+      saveLineup();
+      renderLineup();
+    }
+
+    function updateGamePanel() {
+      const currentItem =
+        getLibraryItem(
+          lineup[currentBatterIndex]
+        );
+
+      const nextIndex =
+        (currentBatterIndex + 1) %
+        lineup.length;
+
+      const nextItem =
+        getLibraryItem(
+          lineup[nextIndex]
+        );
+
+      currentBatterName.textContent =
+        `P${currentBatterIndex + 1} · ${getItemName(currentItem)}`;
+
+      currentBatterSong.textContent =
+        currentItem
+          ? currentItem.song
+          : "No walk-up selected";
+
+      nextUpName.firstChild.textContent =
+        `P${nextIndex + 1} · ${getItemName(nextItem)} `;
+
+      nextUpSong.textContent =
+        nextItem
+          ? `— ${nextItem.song}`
+          : "— No walk-up selected";
+
+      playCurrentButton.disabled =
+        !currentItem ||
+        !currentItem.file;
+
+      saveCurrentBatterIndex();
+    }
+
+    function playCurrentBatter() {
+      const item =
+        getLibraryItem(
+          lineup[currentBatterIndex]
+        );
+
+      if (!item || !item.file) {
+        return;
+      }
+
+      playAudio(item, null);
+    }
+
+    function advanceBatter() {
+      currentBatterIndex =
+        (currentBatterIndex + 1) %
+        lineup.length;
+
+      saveCurrentBatterIndex();
+      renderLineup();
+    }
+
+    function getLibraryItem(id) {
+      if (!id) {
+        return null;
+      }
+
+      return (
+        playerSongs.find(
+          (item) => item.id === id
+        ) ||
+        spareSongs.find(
+          (item) => item.id === id
+        ) ||
+        null
+      );
+    }
+
+    function getItemName(item) {
+      return item
+        ? item.name
+        : "Empty Slot";
+    }
+
+    function loadLineup() {
+      try {
+        const saved =
+          JSON.parse(
+            localStorage.getItem(
+              LINEUP_STORAGE_KEY
+            )
+          );
+
+        if (
+          Array.isArray(saved) &&
+          saved.length === 9
+        ) {
+          return saved;
+        }
+      } catch (error) {
+        console.warn(
+          "Could not load lineup:",
+          error
+        );
+      }
+
+      return [...defaultLineup];
+    }
+
+    function saveLineup() {
+      try {
+        localStorage.setItem(
+          LINEUP_STORAGE_KEY,
+          JSON.stringify(lineup)
+        );
+      } catch (error) {
+        console.warn(
+          "Could not save lineup:",
+          error
+        );
+      }
+    }
+
+    function loadCurrentBatterIndex() {
+      try {
+        const saved =
+          Number(
+            localStorage.getItem(
+              BATTER_STORAGE_KEY
+            )
+          );
+
+        if (
+          Number.isInteger(saved) &&
+          saved >= 0 &&
+          saved <= 8
+        ) {
+          return saved;
+        }
+      } catch (error) {
+        console.warn(
+          "Could not load batter:",
+          error
+        );
+      }
+
+      return 0;
+    }
+
+    function saveCurrentBatterIndex() {
+      try {
+        localStorage.setItem(
+          BATTER_STORAGE_KEY,
+          String(currentBatterIndex)
+        );
+      } catch (error) {
+        console.warn(
+          "Could not save batter:",
+          error
+        );
+      }
+    }
+
+    function playAudio(item, button) {
       stopAudio(false);
 
       const audio =
         new Audio(
-          versionedPath(
-            item.file
-          )
+          versionedPath(item.file)
         );
 
-      audio.preload =
-        "metadata";
+      audio.preload = "metadata";
+      audio.volume = masterVolume;
 
-      audio.volume =
-        masterVolume;
+      currentAudio = audio;
+      currentButton = button;
 
-      currentAudio =
-        audio;
-
-      currentButton =
-        button;
-
-      currentButton.classList.add(
-        "playing"
-      );
+      if (currentButton) {
+        currentButton.classList.add(
+          "playing"
+        );
+      }
 
       currentDescription =
         item.song
@@ -1566,77 +3167,36 @@
 
       audio.addEventListener(
         "loadedmetadata",
-        () => {
-          if (
-            currentAudio === audio
-          ) {
-            updateProgressDisplay();
-          }
-        }
-      );
-
-      audio.addEventListener(
-        "durationchange",
-        () => {
-          if (
-            currentAudio === audio
-          ) {
-            updateProgressDisplay();
-          }
-        }
+        updateProgressDisplay
       );
 
       audio.addEventListener(
         "timeupdate",
-        () => {
-          if (
-            currentAudio === audio
-          ) {
-            updateProgressDisplay();
-          }
-        }
+        updateProgressDisplay
       );
 
       audio.addEventListener(
         "ended",
-        () => {
-          if (
-            currentAudio === audio
-          ) {
-            finishPlayback();
-          }
-        }
+        finishPlayback
       );
 
       audio.addEventListener(
         "error",
         () => {
-          if (
-            currentAudio !== audio
-          ) {
-            return;
-          }
-
-          const failedDescription =
+          const failed =
             currentDescription;
 
           stopAudio(false);
 
           setStatus(
             "Audio file not found:\n" +
-            failedDescription
+            failed
           );
         }
       );
 
       audio.play()
         .then(() => {
-          if (
-            currentAudio !== audio
-          ) {
-            return;
-          }
-
           setStatus(
             "🎵 NOW PLAYING\n" +
             currentDescription
@@ -1650,15 +3210,14 @@
             error
           );
 
-          const failedDescription =
+          const failed =
             currentDescription;
 
           stopAudio(false);
 
           setStatus(
             "Could not play:\n" +
-            failedDescription +
-            "\n\nCheck that the file has been uploaded."
+            failed
           );
         });
     }
@@ -1676,15 +3235,8 @@
       const audioBeingFaded =
         currentAudio;
 
-      /*
-        Current Release 1 fade duration:
-        two seconds.
-      */
-      const fadeDuration =
-        2000;
-
-      const intervalLength =
-        50;
+      const fadeDuration = 2000;
+      const intervalLength = 50;
 
       const startingVolume =
         audioBeingFaded.volume;
@@ -1697,8 +3249,7 @@
         currentDescription
       );
 
-      fadeButton.disabled =
-        true;
+      fadeButton.disabled = true;
 
       fadeTimer =
         window.setInterval(() => {
@@ -1711,13 +3262,12 @@
             return;
           }
 
-          const elapsed =
-            Date.now() -
-            startedAt;
-
           const progress =
             Math.min(
-              elapsed /
+              (
+                Date.now() -
+                startedAt
+              ) /
                 fadeDuration,
               1
             );
@@ -1729,46 +3279,8 @@
                 (1 - progress)
             );
 
-          updateProgressDisplay();
-
-          if (
-            progress >= 1
-          ) {
-            clearFadeTimer();
-
-            audioBeingFaded.pause();
-
-            try {
-              audioBeingFaded
-                .currentTime = 0;
-            } catch (error) {
-              console.warn(
-                "Could not reset audio position:",
-                error
-              );
-            }
-
-            audioBeingFaded.volume =
-              masterVolume;
-
-            if (
-              currentAudio ===
-              audioBeingFaded
-            ) {
-              currentAudio =
-                null;
-            }
-
-            currentDescription =
-              "";
-
-            clearPlayingButton();
-            stopProgressTimer();
-            resetProgress();
-            setControlsEnabled(false);
-            setStatus(
-              "Nothing playing"
-            );
+          if (progress >= 1) {
+            stopAudio();
           }
         }, intervalLength);
     }
@@ -1783,24 +3295,18 @@
         currentAudio.pause();
 
         try {
-          currentAudio
-            .currentTime = 0;
+          currentAudio.currentTime = 0;
         } catch (error) {
-          console.warn(
-            "Could not reset audio position:",
-            error
-          );
+          console.warn(error);
         }
 
         currentAudio.volume =
           masterVolume;
 
-        currentAudio =
-          null;
+        currentAudio = null;
       }
 
-      currentDescription =
-        "";
+      currentDescription = "";
 
       clearPlayingButton();
       resetProgress();
@@ -1814,61 +3320,23 @@
     }
 
     function finishPlayback() {
-      clearFadeTimer();
-      stopProgressTimer();
-
-      if (currentAudio) {
-        currentAudio.pause();
-
-        try {
-          currentAudio
-            .currentTime = 0;
-        } catch (error) {
-          console.warn(
-            "Could not reset audio position:",
-            error
-          );
-        }
-
-        currentAudio.volume =
-          masterVolume;
-
-        currentAudio =
-          null;
-      }
-
-      currentDescription =
-        "";
-
-      clearPlayingButton();
-      resetProgress();
-      setControlsEnabled(false);
-
-      setStatus(
-        "Nothing playing"
-      );
+      stopAudio();
     }
 
     function startProgressTimer() {
       stopProgressTimer();
 
       progressTimer =
-        window.setInterval(
+        setInterval(
           updateProgressDisplay,
           100
         );
     }
 
     function stopProgressTimer() {
-      if (
-        progressTimer !== null
-      ) {
-        window.clearInterval(
-          progressTimer
-        );
-
-        progressTimer =
-          null;
+      if (progressTimer !== null) {
+        clearInterval(progressTimer);
+        progressTimer = null;
       }
     }
 
@@ -1932,57 +3400,76 @@
         return "0:00";
       }
 
-      const roundedSeconds =
+      const rounded =
         Math.floor(seconds);
 
-      const minutes =
-        Math.floor(
-          roundedSeconds / 60
-        );
-
-      const remainingSeconds =
-        roundedSeconds % 60;
-
       return (
-        minutes +
+        Math.floor(rounded / 60) +
         ":" +
         String(
-          remainingSeconds
+          rounded % 60
         ).padStart(2, "0")
       );
     }
 
+    function setControlsEnabled(enabled) {
+      fadeButton.disabled = !enabled;
+      stopButton.disabled = !enabled;
+      miniStopButton.disabled = !enabled;
+    }
+
+    function setStatus(message) {
+      statusElement.textContent =
+        message;
+    }
+
+    function clearPlayingButton() {
+      if (currentButton) {
+        currentButton.classList.remove(
+          "playing"
+        );
+
+        currentButton = null;
+      }
+    }
+
+    function clearFadeTimer() {
+      if (fadeTimer !== null) {
+        clearInterval(fadeTimer);
+        fadeTimer = null;
+      }
+
+      isFading = false;
+    }
+
     function initialiseVolumeSlider() {
-      const sliderValue =
+      const value =
         Math.round(
           masterVolume * 100
         );
 
-      volumeSlider.value =
-        sliderValue;
+      volumeSlider.value = value;
 
       updateVolumeSliderAppearance(
-        sliderValue
+        value
       );
 
       volumeSlider.addEventListener(
         "input",
         () => {
-          const volumePercentage =
+          const percentage =
             Number(
               volumeSlider.value
             );
 
           masterVolume =
-            volumePercentage / 100;
+            percentage / 100;
 
           updateVolumeSliderAppearance(
-            volumePercentage
+            percentage
           );
 
-          saveVolume(
-            masterVolume
-          );
+          saveVolume(masterVolume);
 
           if (
             currentAudio &&
@@ -2006,34 +3493,22 @@
 
     function loadSavedVolume() {
       try {
-        const savedValue =
-          window.localStorage.getItem(
-            VOLUME_STORAGE_KEY
+        const value =
+          Number(
+            localStorage.getItem(
+              VOLUME_STORAGE_KEY
+            )
           );
 
         if (
-          savedValue === null
+          Number.isFinite(value) &&
+          value >= 0 &&
+          value <= 1
         ) {
-          return 1;
-        }
-
-        const parsedValue =
-          Number(savedValue);
-
-        if (
-          Number.isFinite(
-            parsedValue
-          ) &&
-          parsedValue >= 0 &&
-          parsedValue <= 1
-        ) {
-          return parsedValue;
+          return value;
         }
       } catch (error) {
-        console.warn(
-          "Could not load saved volume:",
-          error
-        );
+        console.warn(error);
       }
 
       return 1;
@@ -2041,93 +3516,117 @@
 
     function saveVolume(volume) {
       try {
-        window.localStorage.setItem(
+        localStorage.setItem(
           VOLUME_STORAGE_KEY,
           String(volume)
         );
       } catch (error) {
-        console.warn(
-          "Could not save volume:",
-          error
-        );
+        console.warn(error);
       }
     }
 
-    function clearFadeTimer() {
-      if (
-        fadeTimer !== null
-      ) {
-        window.clearInterval(
-          fadeTimer
-        );
+    function initialisePanelState() {
+      let minimised = false;
 
-        fadeTimer =
-          null;
+      try {
+        minimised =
+          localStorage.getItem(
+            PANEL_STORAGE_KEY
+          ) === "true";
+      } catch (error) {
+        console.warn(error);
       }
 
-      isFading =
-        false;
+      setPanelMinimised(minimised);
     }
 
-    function clearPlayingButton() {
-      if (currentButton) {
-        currentButton.classList.remove(
-          "playing"
-        );
-
-        currentButton =
-          null;
-      }
+    function togglePanel() {
+      setPanelMinimised(
+        !bottomPanel.classList.contains(
+          "minimised"
+        )
+      );
     }
 
-    function setControlsEnabled(
-      enabled
+    function setPanelMinimised(
+      minimised
     ) {
-      fadeButton.disabled =
-        !enabled;
+      bottomPanel.classList.toggle(
+        "minimised",
+        minimised
+      );
 
-      stopButton.disabled =
-        !enabled;
+      panelToggle.textContent =
+        minimised
+          ? "⌃"
+          : "⌄";
 
-      miniStopButton.disabled =
-        !enabled;
+      try {
+        localStorage.setItem(
+          PANEL_STORAGE_KEY,
+          String(minimised)
+        );
+      } catch (error) {
+        console.warn(error);
+      }
+
+      requestAnimationFrame(
+        updatePanelSpacing
+      );
+
+      setTimeout(
+        updatePanelSpacing,
+        220
+      );
     }
 
-    function setStatus(message) {
-      statusElement.textContent =
-        message;
+    function initialisePanelSpacing() {
+      updatePanelSpacing();
+
+      if (
+        "ResizeObserver" in window
+      ) {
+        new ResizeObserver(
+          updatePanelSpacing
+        ).observe(bottomPanel);
+      }
     }
 
-    createButtons(
-      playerSongs,
-      "player-buttons",
-      "player"
-    );
+    function updatePanelSpacing() {
+      const height =
+        bottomPanel
+          .getBoundingClientRect()
+          .height;
 
-    createButtons(
-      spareSongs,
-      "spare-buttons",
-      "spare"
-    );
+      document.documentElement.style
+        .setProperty(
+          "--panel-space",
+          Math.ceil(height + 28) +
+            "px"
+        );
+    }
 
-    createButtons(
-      effects,
-      "effect-buttons",
-      "effect"
-    );
+    function versionedPath(path) {
+      return (
+        path +
+        (path.includes("?")
+          ? "&"
+          : "?") +
+        "v=" +
+        encodeURIComponent(
+          ASSET_VERSION
+        )
+      );
+    }
 
-    /*
-      Recheck spacing after all dynamically generated
-      buttons and fonts have settled.
-    */
-    window.requestAnimationFrame(
-      updatePanelSpacing
-    );
-
-    window.setTimeout(
-      updatePanelSpacing,
-      300
-    );
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
   </script>
 </body>
 </html>
