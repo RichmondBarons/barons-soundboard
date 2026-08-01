@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#111111">
+
+  <title>Barons Soundboard</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding:
+        20px
+        16px
+        calc(180px + env(safe-area-inset-bottom));
+      background: #111111;
+      color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 8px 0 4px;
+      text-align: center;
+      font-size: 30px;
+    }
+
+    .subtitle {
+      margin: 0 0 30px;
+      color: #aaaaaa;
+      text-align: center;
+      font-size: 17px;
+    }
+
+    h2 {
+      margin: 32px 0 14px;
+      padding-bottom: 9px;
+      border-bottom: 3px solid #e11822;
+      font-size: 22px;
+    }
+
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .sound-button {
+      min-height: 88px;
+      padding: 12px 8px;
+      border: none;
+      border-radius: 14px;
+      background: #e11822;
+      color: #ffffff;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .sound-button.spare {
+      background: #8b6508;
+    }
+
+    .sound-button.effect {
+      background: #333333;
+      border: 2px solid #555555;
+    }
+
+    .sound-button.playing {
+      outline: 4px solid #ffffff;
+      outline-offset: -4px;
+    }
+
+    .sound-button:active {
+      transform: scale(0.97);
+    }
+
+    .player-name {
+      display: block;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    .song-title {
+      display: block;
+      margin-top: 7px;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.2;
+      opacity: 0.9;
+    }
+
+    .single-line {
+      display: block;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .bottom-panel {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: calc(16px + env(safe-area-inset-bottom));
+      width: calc(100% - 32px);
+      max-width: 668px;
+      margin: auto;
+      padding: 10px;
+      border: 2px solid #333333;
+      border-radius: 18px;
+      background: rgba(17, 17, 17, 0.97);
+      box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.45);
+      z-index: 100;
+    }
+
+    #status {
+      min-height: 62px;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #222222;
+      color: #dddddd;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: pre-line;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .control-button {
+      flex: 1;
+      min-height: 62px;
+      padding: 10px 8px;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .fade-button {
+      border: none;
+      background: #f0ad4e;
+      color: #111111;
+    }
+
+    .stop-button {
+      border: 4px solid #e11822;
+      background: #ffffff;
+      color: #111111;
+    }
+
+    .control-button:active {
+      transform: scale(0.97);
+    }
+
+    .control-button:disabled {
+      opacity: 0.45;
+      cursor: default;
+      transform: none;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <h1>⚾ Barons Soundboard</h1>
+    <p class="subtitle">Walk-up songs and game sounds</p>
+
+    <h2>🎵 Walk-Up Songs</h2>
+    <div id="player-buttons" class="sound-grid"></div>
+
+    <h2>🎲 Mystery Walk-Ups</h2>
+    <div id="spare-buttons" class="sound-grid"></div>
+
+    <h2>📣 Game Sounds</h2>
+    <div id="effect-buttons" class="sound-grid"></div>
+  </main>
+
+  <div class="bottom-panel">
+    <div id="status">Nothing playing</div>
+
+    <div class="controls">
+      <button
+        id="fade-button"
+        class="control-button fade-button"
+        onclick="fadeOutAudio()"
+        disabled
+      >
+        🌅 Fade Out
+      </button>
+
+      <button
+        id="stop-button"
+        class="control-button stop-button"
+        onclick="stopAudio()"
+        disabled
+      >
+        ⏹ Stop
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const playerSongs = [
+      {
+        name: "Cam",
+        song: "9 to 5",
+        file: "audio/cam.mp3"
+      },
+      {
+        name: "Andy",
+        song: "Anarchy in the UK",
+        file: "audio/andy.mp3"
+      },
+      {
+        name: "Keith",
+        song: "The Chemical Brothers",
+        file: "audio/keith.mp3"
+      },
+      {
+        name: "Bailey",
+        song: "Neat Neat Neat",
+        file: "audio/bailey.mp3"
+      },
+      {
+        name: "CJ",
+        song: "Say When",
+        file: "audio/cj.mp3"
+      },
+      {
+        name: "Jackson",
+        song: "Layla",
+        file: "audio/jackson.mp3"
+      },
+      {
+        name: "Gigi",
+        song: "Work Out",
+        file: "audio/gigi.mp3"
+      },
+      {
+        name: "Leon",
+        song: "SexyBack",
+        file: "audio/leon.mp3"
+      },
+      {
+        name: "Woody",
+        song: "Genesis",
+        file: "audio/woody.mp3"
+      },
+      {
+        name: "Adam",
+        song: "Gasoline",
+        file: "audio/adam.mp3"
+      },
+      {
+        name: "Matt",
+        song: "Cotton Eye Joe",
+        file: "audio/matt.mp3"
+      },
+      {
+        name: "Paul",
+        song: "The Phoenix",
+        file: "audio/paul.mp3"
+      },
+      {
+        name: "Jeewoo",
+        song: "Yiruma",
+        file: "audio/jeewoo.mp3"
+      }
+    ];
+
+    const spareSongs = [
+      {
+        name: "🎲 Spare 1",
+        file: "audio/spare-1.mp3"
+      },
+      {
+        name: "🎲 Spare 2",
+        file: "audio/spare-2.mp3"
+      },
+      {
+        name: "🎲 Spare 3",
+        file: "audio/spare-3.mp3"
+      },
+      {
+        name: "🎲 Spare 4",
+        file: "audio/spare-4.mp3"
+      },
+      {
+        name: "🎲 Spare 5",
+        file: "audio/spare-5.mp3"
+      }
+    ];
+
+    const effects = [
+      {
+        name: "💥 Big Hit",
+        file: "audio/big-hit.mp3"
+      },
+      {
+        name: "🔥 Hype",
+        file: "audio/hype.mp3"
+      },
+      {
+        name: "🎺 Charge",
+        file: "audio/charge.mp3"
+      },
+      {
+        name: "🤡 Wally Trumpet",
+        file: "audio/wally.mp3"
+      },
+      {
+        name: "📯 Air Horn",
+        file: "audio/air-horn.mp3"
+      }
+    ];
+
+    let currentAudio = null;
+    let currentButton = null;
+    let currentDescription = "";
+    let fadeTimer = null;
+    let isFading = false;
+
+    function createButtons(items, containerId, buttonType) {
+      const container = document.getElementById(containerId);
+
+      items.forEach((item) => {
+        const button = document.createElement("button");
+
+        button.className = "sound-button";
+
+        if (buttonType === "spare") {
+          button.classList.add("spare");
+        }
+
+        if (buttonType === "effect") {
+          button.classList.add("effect");
+        }
+
+        if (item.song) {
+          const playerName = document.createElement("span");
+          const songTitle = document.createElement("span");
+
+          playerName.className = "player-name";
+          songTitle.className = "song-title";
+
+          playerName.textContent = item.name;
+          songTitle.textContent = item.song;
+
+          button.appendChild(playerName);
+          button.appendChild(songTitle);
+        } else {
+          const label = document.createElement("span");
+
+          label.className = "single-line";
+          label.textContent = item.name;
+
+          button.appendChild(label);
+        }
+
+        button.addEventListener("click", () => {
+          playAudio(item, button);
+        });
+
+        container.appendChild(button);
+      });
+    }
+
+    function playAudio(item, button) {
+      stopAudio(false);
+
+      currentAudio = new Audio(item.file);
+      currentAudio.volume = 1;
+
+      currentButton = button;
+      currentButton.classList.add("playing");
+
+      currentDescription = item.song
+        ? item.name + "\n" + item.song
+        : item.name;
+
+      setStatus("Loading...\n" + currentDescription);
+      setControlsEnabled(true);
+
+      currentAudio.play()
+        .then(() => {
+          setStatus("🎵 NOW PLAYING\n" + currentDescription);
+        })
+        .catch((error) => {
+          console.error("Audio playback failed:", error);
+
+          setStatus(
+            "Could not play:\n" +
+            currentDescription +
+            "\n\nCheck that the file has been uploaded."
+          );
+
+          finishPlayback();
+        });
+
+      currentAudio.addEventListener("ended", () => {
+        finishPlayback();
+      });
+
+      currentAudio.addEventListener("error", () => {
+        setStatus("Audio file not found:\n" + currentDescription);
+        finishPlayback();
+      });
+    }
+
+    function fadeOutAudio() {
+      if (!currentAudio || isFading) {
+        return;
+      }
+
+      isFading = true;
+
+      const audioBeingFaded = currentAudio;
+      const fadeDuration = 2000;
+      const intervalLength = 50;
+      const startingVolume = audioBeingFaded.volume;
+      const startedAt = Date.now();
+
+      setStatus(
+        "🌅 FADING OUT...\n" +
+        currentDescription
+      );
+
+      document.getElementById("fade-button").disabled = true;
+
+      fadeTimer = setInterval(() => {
+        if (
+          !currentAudio ||
+          currentAudio !== audioBeingFaded
+        ) {
+          clearFadeTimer();
+          return;
+        }
+
+        const elapsed = Date.now() - startedAt;
+        const progress = Math.min(elapsed / fadeDuration, 1);
+
+        audioBeingFaded.volume = Math.max(
+          0,
+          startingVolume * (1 - progress)
+        );
+
+        if (progress >= 1) {
+          clearFadeTimer();
+
+          audioBeingFaded.pause();
+          audioBeingFaded.currentTime = 0;
+          audioBeingFaded.volume = 1;
+
+          if (currentAudio === audioBeingFaded) {
+            currentAudio = null;
+          }
+
+          currentDescription = "";
+          clearPlayingButton();
+          setControlsEnabled(false);
+          setStatus("Nothing playing");
+        }
+      }, intervalLength);
+    }
+
+    function stopAudio(updateStatus = true) {
+      clearFadeTimer();
+
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio.volume = 1;
+        currentAudio = null;
+      }
+
+      currentDescription = "";
+      clearPlayingButton();
+      setControlsEnabled(false);
+
+      if (updateStatus) {
+        setStatus("Nothing playing");
+      }
+    }
+
+    function finishPlayback() {
+      clearFadeTimer();
+
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio.volume = 1;
+        currentAudio = null;
+      }
+
+      currentDescription = "";
+      clearPlayingButton();
+      setControlsEnabled(false);
+      setStatus("Nothing playing");
+    }
+
+    function clearFadeTimer() {
+      if (fadeTimer) {
+        clearInterval(fadeTimer);
+        fadeTimer = null;
+      }
+
+      isFading = false;
+    }
+
+    function clearPlayingButton() {
+      if (currentButton) {
+        currentButton.classList.remove("playing");
+        currentButton = null;
+      }
+    }
+
+    function setControlsEnabled(enabled) {
+      document.getElementById("fade-button").disabled = !enabled;
+      document.getElementById("stop-button").disabled = !enabled;
+    }
+
+    function setStatus(message) {
+      document.getElementById("status").textContent = message;
+    }
+
+    createButtons(
+      playerSongs,
+      "player-buttons",
+      "player"
+    );
+
+    createButtons(
+      spareSongs,
+      "spare-buttons",
+      "spare"
+    );
+
+    createButtons(
+      effects,
+      "effect-buttons",
+      "effect"
+    );
+  </script>
+</body>
+</html>
