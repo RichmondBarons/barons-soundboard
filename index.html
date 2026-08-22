@@ -1504,7 +1504,7 @@
     <header class="app-header">
       <img
         class="club-logo"
-        src="barons-logo.PNG?v=2.0.1"
+        src="barons-logo.PNG?v=2.0.2"
         alt="Richmond Barons logo"
       >
 
@@ -1716,7 +1716,7 @@
         id="version-footer"
         class="app-version"
       >
-        v2.0.1
+        v2.0.2
       </span>
     </footer>
   </main>
@@ -1861,8 +1861,8 @@
   </div>
 
   <script>
-    const APP_VERSION = "2.0.1";
-    const ASSET_VERSION = "2.0.1";
+    const APP_VERSION = "2.0.2";
+    const ASSET_VERSION = "2.0.2";
 
     const MODE_STORAGE_KEY =
       "barons-soundboard-mode";
@@ -2062,6 +2062,12 @@
     let currentAudioItemId = null;
     let currentButton = null;
     let currentDescription = "";
+
+    // Web Audio is used for master volume and fading because iOS Safari
+    // does not reliably honour programmatic HTMLMediaElement.volume changes.
+    let audioContext = null;
+    let currentSourceNode = null;
+    let currentGainNode = null;
 
     let fadeTimer = null;
     let progressTimer = null;
@@ -3432,6 +3438,91 @@
       }
     }
 
+    function getAudioContext() {
+      if (!audioContext) {
+        const AudioContextClass =
+          window.AudioContext ||
+          window.webkitAudioContext;
+
+        if (!AudioContextClass) {
+          return null;
+        }
+
+        audioContext = new AudioContextClass();
+      }
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume().catch(
+          (error) => console.warn(
+            "Could not resume audio context:",
+            error
+          )
+        );
+      }
+
+      return audioContext;
+    }
+
+    function ensureAudioGraph(audio) {
+      const context = getAudioContext();
+
+      if (!context) {
+        return;
+      }
+
+      disconnectCurrentAudioGraph();
+
+      currentSourceNode =
+        context.createMediaElementSource(audio);
+
+      currentGainNode =
+        context.createGain();
+
+      currentGainNode.gain.value =
+        masterVolume;
+
+      currentSourceNode.connect(
+        currentGainNode
+      );
+
+      currentGainNode.connect(
+        context.destination
+      );
+    }
+
+    function setGainImmediately(value) {
+      if (!audioContext || !currentGainNode) {
+        return;
+      }
+
+      const now = audioContext.currentTime;
+      const gain = currentGainNode.gain;
+
+      gain.cancelScheduledValues(now);
+      gain.setValueAtTime(value, now);
+    }
+
+    function disconnectCurrentAudioGraph() {
+      if (currentSourceNode) {
+        try {
+          currentSourceNode.disconnect();
+        } catch (error) {
+          console.warn(error);
+        }
+      }
+
+      if (currentGainNode) {
+        try {
+          currentGainNode.disconnect();
+        } catch (error) {
+          console.warn(error);
+        }
+      }
+
+      currentSourceNode = null;
+      currentGainNode = null;
+    }
+
     function playAudio(item, button) {
       stopAudio(false);
 
@@ -3441,7 +3532,18 @@
         );
 
       audio.preload = "metadata";
-      audio.volume = masterVolume;
+      // Keep the media element itself at full volume. All app volume control
+      // happens through a Web Audio GainNode for consistent phone support.
+      audio.volume = 1;
+
+      try {
+        ensureAudioGraph(audio);
+      } catch (error) {
+        console.error(
+          "Could not initialise Web Audio:",
+          error
+        );
+      }
 
       currentAudio = audio;
       currentAudioItemId = item.id || null;
@@ -3541,13 +3643,6 @@
         currentAudio;
 
       const fadeDuration = 2000;
-      const intervalLength = 50;
-
-      const startingVolume =
-        audioBeingFaded.volume;
-
-      const startedAt =
-        Date.now();
 
       setStatus(
         "🌅 FADING OUT...\n" +
@@ -3557,38 +3652,32 @@
       setControlsEnabled(true);
       updateCurrentBatterAudioControls();
 
-      fadeTimer =
-        window.setInterval(() => {
-          if (
-            !currentAudio ||
-            currentAudio !==
-              audioBeingFaded
-          ) {
-            clearFadeTimer();
-            return;
-          }
+      if (audioContext && currentGainNode) {
+        const now = audioContext.currentTime;
+        const gain = currentGainNode.gain;
 
-          const progress =
-            Math.min(
-              (
-                Date.now() -
-                startedAt
-              ) /
-                fadeDuration,
-              1
-            );
+        // Freeze the gain at its present value, then let the audio engine
+        // perform a smooth 2-second fade independently of JavaScript timers.
+        gain.cancelScheduledValues(now);
+        gain.setValueAtTime(gain.value, now);
+        gain.linearRampToValueAtTime(
+          0,
+          now + fadeDuration / 1000
+        );
 
-          audioBeingFaded.volume =
-            Math.max(
-              0,
-              startingVolume *
-                (1 - progress)
-            );
-
-          if (progress >= 1) {
+        fadeTimer = window.setTimeout(() => {
+          if (currentAudio === audioBeingFaded) {
             stopAudio();
           }
-        }, intervalLength);
+        }, fadeDuration + 40);
+      } else {
+        // Fallback for a browser where Web Audio could not be created.
+        fadeTimer = window.setTimeout(() => {
+          if (currentAudio === audioBeingFaded) {
+            stopAudio();
+          }
+        }, fadeDuration);
+      }
     }
 
     function stopAudio(
@@ -3606,11 +3695,10 @@
           console.warn(error);
         }
 
-        currentAudio.volume =
-          masterVolume;
-
         currentAudio = null;
       }
+
+      disconnectCurrentAudioGraph();
 
       currentAudioItemId = null;
       currentDescription = "";
@@ -3755,7 +3843,7 @@
 
     function clearFadeTimer() {
       if (fadeTimer !== null) {
-        clearInterval(fadeTimer);
+        clearTimeout(fadeTimer);
         fadeTimer = null;
       }
 
@@ -3792,11 +3880,10 @@
           saveVolume(masterVolume);
 
           if (
-            currentAudio &&
+            currentGainNode &&
             !isFading
           ) {
-            currentAudio.volume =
-              masterVolume;
+            setGainImmediately(masterVolume);
           }
         }
       );
