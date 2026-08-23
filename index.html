@@ -1504,7 +1504,7 @@
     <header class="app-header">
       <img
         class="club-logo"
-        src="barons-logo.PNG?v=2.0.2"
+        src="barons-logo.PNG?v=2.0.3"
         alt="Richmond Barons logo"
       >
 
@@ -1716,7 +1716,7 @@
         id="version-footer"
         class="app-version"
       >
-        v2.0.2
+        v2.0.3
       </span>
     </footer>
   </main>
@@ -1861,8 +1861,8 @@
   </div>
 
   <script>
-    const APP_VERSION = "2.0.2";
-    const ASSET_VERSION = "2.0.2";
+    const APP_VERSION = "2.0.3";
+    const ASSET_VERSION = "2.0.3";
 
     const MODE_STORAGE_KEY =
       "barons-soundboard-mode";
@@ -1879,7 +1879,16 @@
     const BATTER_STORAGE_KEY =
       "barons-soundboard-current-batter";
 
-    const playerSongs = [
+    const SOUNDS_CACHE_KEY =
+      "barons-soundboard-sounds-cache";
+
+    const SUPABASE_URL =
+      "https://qxpuggaommreuiercgwf.supabase.co";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_SvusgfP9JiRBTmfTOIeWPw_akTL1Rri";
+
+    let playerSongs = [
       {
         id: "cam",
         name: "Cam",
@@ -1966,7 +1975,7 @@
       }
     ];
 
-    const spareSongs = [
+    let spareSongs = [
       {
         id: "spare-1",
         name: "Spare 1",
@@ -2004,7 +2013,7 @@
       }
     ];
 
-    const effects = [
+    let effects = [
       {
         id: "big-hit",
         name: "Big Hit",
@@ -2176,10 +2185,12 @@
 
     initialise();
 
-    function initialise() {
+    async function initialise() {
       document.getElementById(
         "version-footer"
       ).textContent = "v" + APP_VERSION;
+
+      await loadSoundsCatalogue();
 
       createQuickBoardButtons();
       initialiseMode();
@@ -2279,6 +2290,141 @@
       window.addEventListener(
         "resize",
         updatePanelSpacing
+      );
+    }
+
+    async function loadSoundsCatalogue() {
+      try {
+        const response = await fetch(
+          SUPABASE_URL +
+            "/rest/v1/sounds" +
+            "?select=id,type,name,song,file,sort_order" +
+            "&order=sort_order.asc",
+          {
+            headers: {
+              apikey: SUPABASE_PUBLISHABLE_KEY
+            }
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Supabase returned " + response.status
+          );
+        }
+
+        const rows = await response.json();
+
+        if (!Array.isArray(rows) || rows.length === 0) {
+          throw new Error(
+            "Supabase returned an empty sounds catalogue"
+          );
+        }
+
+        applySoundsCatalogue(rows);
+
+        try {
+          localStorage.setItem(
+            SOUNDS_CACHE_KEY,
+            JSON.stringify(rows)
+          );
+        } catch (error) {
+          console.warn(
+            "Could not cache sounds catalogue:",
+            error
+          );
+        }
+
+        console.info(
+          "Loaded soundboard catalogue from Supabase:",
+          rows.length,
+          "sounds"
+        );
+      } catch (error) {
+        console.warn(
+          "Could not load sounds from Supabase. Using cached or built-in catalogue.",
+          error
+        );
+
+        try {
+          const cached = JSON.parse(
+            localStorage.getItem(
+              SOUNDS_CACHE_KEY
+            )
+          );
+
+          if (
+            Array.isArray(cached) &&
+            cached.length > 0
+          ) {
+            applySoundsCatalogue(cached);
+
+            console.info(
+              "Loaded cached soundboard catalogue:",
+              cached.length,
+              "sounds"
+            );
+          }
+        } catch (cacheError) {
+          console.warn(
+            "Could not load cached sounds catalogue:",
+            cacheError
+          );
+        }
+      }
+    }
+
+    function applySoundsCatalogue(rows) {
+      const cleanRows = rows
+        .filter((row) => {
+          return (
+            row &&
+            typeof row.id === "string" &&
+            typeof row.name === "string" &&
+            typeof row.file === "string"
+          );
+        })
+        .map((row) => ({
+          id: row.id,
+          type: row.type,
+          name: row.name,
+          song: row.song || "",
+          file: row.file,
+          sort_order:
+            Number.isFinite(Number(row.sort_order))
+              ? Number(row.sort_order)
+              : 0
+        }));
+
+      const players = cleanRows
+        .filter((row) => row.type === "player")
+        .sort(sortByOrderThenName);
+
+      const spares = cleanRows
+        .filter((row) => row.type === "spare")
+        .sort(sortByOrderThenName);
+
+      const gameSounds = cleanRows
+        .filter((row) => row.type === "effect")
+        .sort(sortByOrderThenName);
+
+      if (players.length > 0) {
+        playerSongs = players;
+      }
+
+      if (spares.length > 0) {
+        spareSongs = spares;
+      }
+
+      if (gameSounds.length > 0) {
+        effects = gameSounds;
+      }
+    }
+
+    function sortByOrderThenName(a, b) {
+      return (
+        (a.sort_order - b.sort_order) ||
+        a.name.localeCompare(b.name)
       );
     }
 
