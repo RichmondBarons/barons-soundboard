@@ -1448,6 +1448,265 @@
       opacity: 0.38;
     }
 
+
+    /* Manage Sounds */
+
+    .manage-launch {
+      margin-top: 12px;
+      padding: 7px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.025);
+      color: rgba(255, 255, 255, 0.42);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .manage-launch:active {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .manage-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 700;
+      padding: 14px;
+      background: rgba(0, 0, 0, 0.82);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .manage-backdrop.open {
+      display: block;
+    }
+
+    .manage-panel {
+      width: 100%;
+      max-width: 650px;
+      margin: 12px auto 80px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 18px;
+      background: linear-gradient(160deg, #24272d, #0d0e11);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    }
+
+    .manage-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .manage-title {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 850;
+    }
+
+    .manage-close {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 11px;
+      background: #292d34;
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .manage-helper {
+      margin: 0 0 14px;
+      color: #9da1a9;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .manage-login,
+    .sound-editor {
+      display: grid;
+      gap: 11px;
+    }
+
+    .manage-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .manage-field label {
+      color: #c9cbd0;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .manage-input,
+    .manage-select {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 10px;
+      background: #090a0d;
+      color: var(--white);
+      font-size: 15px;
+    }
+
+    .manage-button {
+      min-height: 46px;
+      padding: 9px 12px;
+      border-radius: 11px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .manage-primary {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: linear-gradient(150deg, var(--barons-red-bright), var(--barons-red-dark));
+      color: var(--white);
+    }
+
+    .manage-secondary {
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      background: linear-gradient(150deg, #353a43, #1a1d22);
+      color: var(--white);
+    }
+
+    .manage-button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .manage-status {
+      display: none;
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .manage-status.visible { display: block; }
+    .manage-status.error {
+      border: 1px solid rgba(224, 25, 40, 0.45);
+      background: rgba(224, 25, 40, 0.10);
+      color: #ff9ca5;
+    }
+    .manage-status.success {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.05);
+      color: #e6e7ea;
+    }
+
+    .manage-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 4px 0 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .manage-user {
+      min-width: 0;
+      color: #969aa2;
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .manage-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .manage-group-title {
+      margin: 18px 0 7px;
+      color: #aeb1b8;
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .manage-sound-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .manage-sound-name {
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .manage-sound-meta {
+      margin-top: 3px;
+      color: #6f737c;
+      font-size: 11px;
+      font-style: italic;
+      overflow-wrap: anywhere;
+    }
+
+    .manage-edit-button {
+      min-height: 38px;
+      padding: 7px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 9px;
+      background: linear-gradient(150deg, #343943, #1b1e24);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .sound-editor-shell {
+      display: none;
+      margin-bottom: 16px;
+      padding: 13px;
+      border: 1px solid rgba(207, 0, 17, 0.30);
+      border-radius: 14px;
+      background: rgba(207, 0, 17, 0.055);
+    }
+
+    .sound-editor-shell.open { display: block; }
+
+    .editor-heading-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .editor-heading {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 850;
+    }
+
+    .editor-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 3px;
+    }
+
+    .new-audio-wrap { display: none; }
+    .new-audio-wrap.visible { display: grid; }
+
     @media (max-width: 390px) {
       body {
         padding-left: 12px;
@@ -1504,7 +1763,7 @@
     <header class="app-header">
       <img
         class="club-logo"
-        src="barons-logo.PNG?v=2.0.3"
+        src="barons-logo.PNG?v=2.1.0"
         alt="Richmond Barons logo"
       >
 
@@ -1716,10 +1975,170 @@
         id="version-footer"
         class="app-version"
       >
-        v2.0.3
+        v2.1.0
       </span>
+      <br>
+      <button
+        id="manage-sounds-launch"
+        class="manage-launch"
+        type="button"
+      >
+        ⚙️ Manage Sounds
+      </button>
     </footer>
   </main>
+
+  <div
+    id="manage-backdrop"
+    class="manage-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="manage-title"
+  >
+    <div class="manage-panel">
+      <div class="manage-header">
+        <h2 id="manage-title" class="manage-title">
+          ⚙️ Manage Sounds
+        </h2>
+        <button
+          id="manage-close"
+          class="manage-close"
+          type="button"
+          aria-label="Close sound manager"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div id="manage-status" class="manage-status"></div>
+
+      <div id="manage-login-view">
+        <p class="manage-helper">
+          Sign in to edit the shared soundboard. Normal game-day use does not require a login.
+        </p>
+
+        <div class="manage-login">
+          <div class="manage-field">
+            <label for="manage-email">Admin email</label>
+            <input
+              id="manage-email"
+              class="manage-input"
+              type="email"
+              autocomplete="username"
+            >
+          </div>
+
+          <div class="manage-field">
+            <label for="manage-password">Password</label>
+            <input
+              id="manage-password"
+              class="manage-input"
+              type="password"
+              autocomplete="current-password"
+            >
+          </div>
+
+          <button
+            id="manage-sign-in"
+            class="manage-button manage-primary"
+            type="button"
+          >
+            Sign In
+          </button>
+        </div>
+      </div>
+
+      <div id="manage-admin-view" hidden>
+        <div class="manage-toolbar">
+          <div id="manage-user" class="manage-user"></div>
+          <button
+            id="manage-sign-out"
+            class="manage-button manage-secondary"
+            type="button"
+          >
+            Sign Out
+          </button>
+        </div>
+
+        <button
+          id="add-sound-button"
+          class="manage-button manage-primary"
+          type="button"
+        >
+          ＋ Add New Button
+        </button>
+
+        <div id="sound-editor-shell" class="sound-editor-shell">
+          <div class="editor-heading-row">
+            <h3 id="editor-heading" class="editor-heading">
+              Add New Button
+            </h3>
+          </div>
+
+          <div class="sound-editor">
+            <div class="manage-field">
+              <label for="editor-type">Button type</label>
+              <select id="editor-type" class="manage-select">
+                <option value="player">Walk-Up Song</option>
+                <option value="spare">Mystery / Spare</option>
+                <option value="effect">Game Sound</option>
+              </select>
+            </div>
+
+            <div class="manage-field">
+              <label for="editor-name">Player / button name</label>
+              <input id="editor-name" class="manage-input" type="text">
+            </div>
+
+            <div class="manage-field">
+              <label for="editor-song">Song name</label>
+              <input
+                id="editor-song"
+                class="manage-input"
+                type="text"
+                placeholder="Optional for game sounds"
+              >
+            </div>
+
+            <div class="manage-field">
+              <label for="editor-audio-select">Audio file</label>
+              <select id="editor-audio-select" class="manage-select"></select>
+            </div>
+
+            <div id="new-audio-wrap" class="manage-field new-audio-wrap">
+              <label for="editor-new-audio">Newly uploaded filename / path</label>
+              <input
+                id="editor-new-audio"
+                class="manage-input"
+                type="text"
+                placeholder="e.g. audio/new-song.mp3"
+              >
+            </div>
+
+            <div class="editor-actions">
+              <button
+                id="editor-cancel"
+                class="manage-button manage-secondary"
+                type="button"
+              >
+                Cancel
+              </button>
+
+              <button
+                id="editor-save"
+                class="manage-button manage-primary"
+                type="button"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="manage-list" class="manage-list"></div>
+      </div>
+    </div>
+  </div>
 
   <div
     id="confirmation-backdrop"
@@ -1861,8 +2280,8 @@
   </div>
 
   <script>
-    const APP_VERSION = "2.0.3";
-    const ASSET_VERSION = "2.0.3";
+    const APP_VERSION = "2.1.0";
+    const ASSET_VERSION = "2.1.0";
 
     const MODE_STORAGE_KEY =
       "barons-soundboard-mode";
@@ -1881,6 +2300,9 @@
 
     const SOUNDS_CACHE_KEY =
       "barons-soundboard-sounds-cache";
+
+    const ADMIN_SESSION_KEY =
+      "barons-soundboard-admin-session";
 
     const SUPABASE_URL =
       "https://qxpuggaommreuiercgwf.supabase.co";
@@ -2084,6 +2506,9 @@
     let isFading = false;
     let masterVolume = loadSavedVolume();
 
+    let adminSession = loadAdminSession();
+    let editingSoundId = null;
+
     const quickModeButton =
       document.getElementById("quick-mode-button");
 
@@ -2182,6 +2607,75 @@
 
     const volumeSlider =
       document.getElementById("volume-slider");
+
+    const manageSoundsLaunch =
+      document.getElementById("manage-sounds-launch");
+
+    const manageBackdrop =
+      document.getElementById("manage-backdrop");
+
+    const manageClose =
+      document.getElementById("manage-close");
+
+    const manageStatus =
+      document.getElementById("manage-status");
+
+    const manageLoginView =
+      document.getElementById("manage-login-view");
+
+    const manageAdminView =
+      document.getElementById("manage-admin-view");
+
+    const manageEmail =
+      document.getElementById("manage-email");
+
+    const managePassword =
+      document.getElementById("manage-password");
+
+    const manageSignIn =
+      document.getElementById("manage-sign-in");
+
+    const manageSignOut =
+      document.getElementById("manage-sign-out");
+
+    const manageUser =
+      document.getElementById("manage-user");
+
+    const addSoundButton =
+      document.getElementById("add-sound-button");
+
+    const manageList =
+      document.getElementById("manage-list");
+
+    const soundEditorShell =
+      document.getElementById("sound-editor-shell");
+
+    const editorHeading =
+      document.getElementById("editor-heading");
+
+    const editorType =
+      document.getElementById("editor-type");
+
+    const editorName =
+      document.getElementById("editor-name");
+
+    const editorSong =
+      document.getElementById("editor-song");
+
+    const editorAudioSelect =
+      document.getElementById("editor-audio-select");
+
+    const newAudioWrap =
+      document.getElementById("new-audio-wrap");
+
+    const editorNewAudio =
+      document.getElementById("editor-new-audio");
+
+    const editorCancel =
+      document.getElementById("editor-cancel");
+
+    const editorSave =
+      document.getElementById("editor-save");
 
     initialise();
 
@@ -2287,10 +2781,573 @@
         }
       );
 
+      manageSoundsLaunch.addEventListener(
+        "click",
+        openSoundManager
+      );
+
+      manageClose.addEventListener(
+        "click",
+        closeSoundManager
+      );
+
+      manageBackdrop.addEventListener(
+        "click",
+        (event) => {
+          if (event.target === manageBackdrop) {
+            closeSoundManager();
+          }
+        }
+      );
+
+      manageSignIn.addEventListener(
+        "click",
+        signInAdmin
+      );
+
+      managePassword.addEventListener(
+        "keydown",
+        (event) => {
+          if (event.key === "Enter") {
+            signInAdmin();
+          }
+        }
+      );
+
+      manageSignOut.addEventListener(
+        "click",
+        signOutAdmin
+      );
+
+      addSoundButton.addEventListener(
+        "click",
+        () => openSoundEditor(null)
+      );
+
+      editorAudioSelect.addEventListener(
+        "change",
+        updateNewAudioVisibility
+      );
+
+      editorCancel.addEventListener(
+        "click",
+        closeSoundEditor
+      );
+
+      editorSave.addEventListener(
+        "click",
+        saveSoundFromEditor
+      );
+
       window.addEventListener(
         "resize",
         updatePanelSpacing
       );
+    }
+
+    function allSounds() {
+      return [
+        ...playerSongs.map((item) => ({ ...item, type: "player" })),
+        ...spareSongs.map((item) => ({ ...item, type: "spare" })),
+        ...effects.map((item) => ({ ...item, type: "effect" }))
+      ];
+    }
+
+    function openSoundManager() {
+      clearManageStatus();
+      closeSoundEditor();
+      renderManagerAuthState();
+      manageBackdrop.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeSoundManager() {
+      manageBackdrop.classList.remove("open");
+      document.body.style.overflow = "";
+      closeSoundEditor();
+      clearManageStatus();
+    }
+
+    function loadAdminSession() {
+      try {
+        const saved = JSON.parse(
+          localStorage.getItem(ADMIN_SESSION_KEY)
+        );
+
+        if (
+          saved &&
+          typeof saved.access_token === "string" &&
+          typeof saved.refresh_token === "string"
+        ) {
+          return saved;
+        }
+      } catch (error) {
+        console.warn("Could not load admin session:", error);
+      }
+
+      return null;
+    }
+
+    function saveAdminSession(session) {
+      adminSession = session;
+
+      try {
+        if (session) {
+          localStorage.setItem(
+            ADMIN_SESSION_KEY,
+            JSON.stringify(session)
+          );
+        } else {
+          localStorage.removeItem(ADMIN_SESSION_KEY);
+        }
+      } catch (error) {
+        console.warn("Could not persist admin session:", error);
+      }
+    }
+
+    async function signInAdmin() {
+      const email = manageEmail.value.trim();
+      const password = managePassword.value;
+
+      if (!email || !password) {
+        showManageStatus(
+          "Enter your admin email and password.",
+          "error"
+        );
+        return;
+      }
+
+      manageSignIn.disabled = true;
+      clearManageStatus();
+
+      try {
+        const response = await fetch(
+          SUPABASE_URL +
+            "/auth/v1/token?grant_type=password",
+          {
+            method: "POST",
+            headers: {
+              apikey: SUPABASE_PUBLISHABLE_KEY,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              email,
+              password
+            })
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.access_token) {
+          throw new Error(
+            data.error_description ||
+            data.msg ||
+            data.message ||
+            "Sign-in failed"
+          );
+        }
+
+        const expiresAt = Math.floor(Date.now() / 1000) +
+          Number(data.expires_in || 3600);
+
+        saveAdminSession({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token,
+          expires_at: expiresAt,
+          user: data.user || { email }
+        });
+
+        managePassword.value = "";
+        showManageStatus("Signed in.", "success");
+        renderManagerAuthState();
+      } catch (error) {
+        showManageStatus(
+          "Could not sign in: " + error.message,
+          "error"
+        );
+      } finally {
+        manageSignIn.disabled = false;
+      }
+    }
+
+    function signOutAdmin() {
+      saveAdminSession(null);
+      closeSoundEditor();
+      renderManagerAuthState();
+      showManageStatus("Signed out.", "success");
+    }
+
+    async function ensureAdminAccessToken() {
+      if (!adminSession) {
+        throw new Error("Admin sign-in required.");
+      }
+
+      const now = Math.floor(Date.now() / 1000);
+      const expiresAt = Number(adminSession.expires_at || 0);
+
+      if (
+        adminSession.access_token &&
+        expiresAt > now + 60
+      ) {
+        return adminSession.access_token;
+      }
+
+      const response = await fetch(
+        SUPABASE_URL +
+          "/auth/v1/token?grant_type=refresh_token",
+        {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_PUBLISHABLE_KEY,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            refresh_token: adminSession.refresh_token
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.access_token) {
+        saveAdminSession(null);
+        renderManagerAuthState();
+        throw new Error(
+          "Your admin session expired. Please sign in again."
+        );
+      }
+
+      const refreshed = {
+        access_token: data.access_token,
+        refresh_token:
+          data.refresh_token || adminSession.refresh_token,
+        expires_at:
+          Math.floor(Date.now() / 1000) +
+          Number(data.expires_in || 3600),
+        user: data.user || adminSession.user
+      };
+
+      saveAdminSession(refreshed);
+      return refreshed.access_token;
+    }
+
+    function renderManagerAuthState() {
+      const signedIn = Boolean(adminSession);
+
+      manageLoginView.hidden = signedIn;
+      manageAdminView.hidden = !signedIn;
+
+      if (signedIn) {
+        manageUser.textContent =
+          adminSession.user?.email || "Admin";
+        renderManageSoundsList();
+      }
+    }
+
+    function showManageStatus(message, type) {
+      manageStatus.textContent = message;
+      manageStatus.className =
+        "manage-status visible " + type;
+    }
+
+    function clearManageStatus() {
+      manageStatus.textContent = "";
+      manageStatus.className = "manage-status";
+    }
+
+    function renderManageSoundsList() {
+      manageList.innerHTML = "";
+
+      const groups = [
+        ["player", "Walk-Up Songs"],
+        ["spare", "Mystery / Spare Songs"],
+        ["effect", "Game Sounds"]
+      ];
+
+      groups.forEach(([type, title]) => {
+        const rows = allSounds()
+          .filter((item) => item.type === type)
+          .sort(sortByOrderThenName);
+
+        const heading = document.createElement("div");
+        heading.className = "manage-group-title";
+        heading.textContent = title;
+        manageList.appendChild(heading);
+
+        rows.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "manage-sound-row";
+
+          const info = document.createElement("div");
+
+          const name = document.createElement("div");
+          name.className = "manage-sound-name";
+          name.textContent = item.name;
+
+          const meta = document.createElement("div");
+          meta.className = "manage-sound-meta";
+          meta.textContent = [item.song, item.file]
+            .filter(Boolean)
+            .join(" · ");
+
+          info.appendChild(name);
+          info.appendChild(meta);
+
+          const edit = document.createElement("button");
+          edit.className = "manage-edit-button";
+          edit.type = "button";
+          edit.textContent = "Edit";
+          edit.addEventListener(
+            "click",
+            () => openSoundEditor(item.id)
+          );
+
+          row.appendChild(info);
+          row.appendChild(edit);
+          manageList.appendChild(row);
+        });
+      });
+    }
+
+    function populateAudioSelect(selectedFile = "") {
+      const files = [...new Set(
+        allSounds()
+          .map((item) => item.file)
+          .filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b));
+
+      editorAudioSelect.innerHTML = "";
+
+      files.forEach((file) => {
+        const option = document.createElement("option");
+        option.value = file;
+        option.textContent = file;
+        editorAudioSelect.appendChild(option);
+      });
+
+      const custom = document.createElement("option");
+      custom.value = "__new__";
+      custom.textContent = "＋ Use a newly uploaded file…";
+      editorAudioSelect.appendChild(custom);
+
+      if (selectedFile && files.includes(selectedFile)) {
+        editorAudioSelect.value = selectedFile;
+      } else if (selectedFile) {
+        editorAudioSelect.value = "__new__";
+        editorNewAudio.value = selectedFile;
+      } else if (files.length > 0) {
+        editorAudioSelect.value = files[0];
+      } else {
+        editorAudioSelect.value = "__new__";
+      }
+
+      updateNewAudioVisibility();
+    }
+
+    function updateNewAudioVisibility() {
+      const isNew =
+        editorAudioSelect.value === "__new__";
+
+      newAudioWrap.classList.toggle(
+        "visible",
+        isNew
+      );
+    }
+
+    function openSoundEditor(soundId) {
+      clearManageStatus();
+      editingSoundId = soundId;
+
+      const item = soundId
+        ? allSounds().find((sound) => sound.id === soundId)
+        : null;
+
+      editorHeading.textContent = item
+        ? "Edit Button"
+        : "Add New Button";
+
+      editorType.value = item?.type || "player";
+      editorName.value = item?.name || "";
+      editorSong.value = item?.song || "";
+      editorNewAudio.value = "";
+      populateAudioSelect(item?.file || "");
+
+      soundEditorShell.classList.add("open");
+
+      requestAnimationFrame(() => {
+        editorName.focus({ preventScroll: true });
+        soundEditorShell.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      });
+    }
+
+    function closeSoundEditor() {
+      editingSoundId = null;
+      soundEditorShell.classList.remove("open");
+      editorNewAudio.value = "";
+    }
+
+    function normalizeAudioPath(value) {
+      const trimmed = value.trim();
+
+      if (!trimmed) {
+        return "";
+      }
+
+      if (
+        trimmed.startsWith("audio/") ||
+        trimmed.startsWith("http://") ||
+        trimmed.startsWith("https://")
+      ) {
+        return trimmed;
+      }
+
+      return "audio/" + trimmed.replace(/^\/+/, "");
+    }
+
+    function makeUniqueSoundId(name) {
+      const base = name
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "sound";
+
+      const existing = new Set(
+        allSounds().map((item) => item.id)
+      );
+
+      if (!existing.has(base)) {
+        return base;
+      }
+
+      let number = 2;
+      while (existing.has(base + "-" + number)) {
+        number += 1;
+      }
+
+      return base + "-" + number;
+    }
+
+    function nextSortOrder(type) {
+      const values = allSounds()
+        .filter((item) => item.type === type)
+        .map((item) => Number(item.sort_order || 0));
+
+      return values.length
+        ? Math.max(...values) + 1
+        : 1;
+    }
+
+    async function saveSoundFromEditor() {
+      const type = editorType.value;
+      const name = editorName.value.trim();
+      const song = editorSong.value.trim();
+
+      const selectedAudio =
+        editorAudioSelect.value === "__new__"
+          ? editorNewAudio.value
+          : editorAudioSelect.value;
+
+      const file = normalizeAudioPath(selectedAudio);
+
+      if (!name) {
+        showManageStatus(
+          "Give the button a name.",
+          "error"
+        );
+        return;
+      }
+
+      if (!file) {
+        showManageStatus(
+          "Choose an existing audio file or enter the filename you uploaded to GitHub.",
+          "error"
+        );
+        return;
+      }
+
+      editorSave.disabled = true;
+      clearManageStatus();
+
+      try {
+        const token = await ensureAdminAccessToken();
+        const existing = editingSoundId
+          ? allSounds().find((item) => item.id === editingSoundId)
+          : null;
+
+        const payload = {
+          type,
+          name,
+          song: song || null,
+          file,
+          sort_order: existing
+            ? Number(existing.sort_order || 0)
+            : nextSortOrder(type),
+          updated_at: new Date().toISOString()
+        };
+
+        let url = SUPABASE_URL + "/rest/v1/sounds";
+        let method = "POST";
+
+        if (existing) {
+          method = "PATCH";
+          url += "?id=eq." + encodeURIComponent(existing.id);
+        } else {
+          payload.id = makeUniqueSoundId(name);
+        }
+
+        const response = await fetch(url, {
+          method,
+          headers: {
+            apikey: SUPABASE_PUBLISHABLE_KEY,
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const detail = await response.text();
+          throw new Error(
+            "Supabase returned " +
+            response.status +
+            (detail ? ": " + detail : "")
+          );
+        }
+
+        await refreshCatalogueAndUI();
+        closeSoundEditor();
+        renderManageSoundsList();
+        showManageStatus(
+          existing
+            ? "Button updated for everyone."
+            : "New button added for everyone.",
+          "success"
+        );
+      } catch (error) {
+        showManageStatus(
+          "Could not save: " + error.message,
+          "error"
+        );
+      } finally {
+        editorSave.disabled = false;
+      }
+    }
+
+    async function refreshCatalogueAndUI() {
+      await loadSoundsCatalogue();
+
+      document.getElementById("player-buttons").innerHTML = "";
+      document.getElementById("spare-buttons").innerHTML = "";
+      document.getElementById("effect-buttons").innerHTML = "";
+
+      createQuickBoardButtons();
+      renderLineup();
+      updateGamePanel();
     }
 
     async function loadSoundsCatalogue() {
