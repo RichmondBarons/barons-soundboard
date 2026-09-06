@@ -1707,6 +1707,19 @@
     .new-audio-wrap { display: none; }
     .new-audio-wrap.visible { display: grid; }
 
+
+    /* Head-to-head mode */
+    .h2h-launch { position: absolute; top: 10px; right: 10px; min-height: 34px; padding: 6px 9px; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; background: rgba(18,20,24,.92); color: #c9cbd0; font-size: 11px; font-weight: 800; cursor: pointer; z-index: 2; }
+    .h2h-launch.active { border-color: rgba(207,0,17,.72); background: linear-gradient(150deg,var(--barons-red-bright),var(--barons-red-dark)); color: white; }
+    .app-header { position: relative; }
+    .team-switcher { display: none; grid-template-columns: 1fr 1fr; gap: 7px; margin: 0 0 18px; padding: 4px; border: 1px solid rgba(255,255,255,.10); border-radius: 13px; background: rgba(255,255,255,.025); }
+    .head-to-head .team-switcher { display: grid; }
+    .team-button { min-height: 40px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: #aeb1b8; font-size: 13px; font-weight: 850; cursor: pointer; }
+    .team-button.active { border-color: rgba(255,255,255,.14); background: linear-gradient(150deg,var(--barons-red-bright),var(--barons-red-dark)); color: white; }
+    .team-context { display:none; margin: -8px 0 14px; color:#8f939b; font-size:12px; font-weight:750; text-align:center; }
+    .head-to-head .team-context { display:block; }
+    .editor-team-wrap.hidden { display:none; }
+
     @media (max-width: 390px) {
       body {
         padding-left: 12px;
@@ -1761,9 +1774,10 @@
   <main class="container">
 
     <header class="app-header">
+      <button id="h2h-launch" class="h2h-launch" type="button">⇄ Head-to-Head</button>
       <img
         class="club-logo"
-        src="barons-logo.PNG?v=2.1.0"
+        src="barons-logo.PNG?v=2.2.1"
         alt="Richmond Barons logo"
       >
 
@@ -1804,30 +1818,23 @@
       class="app-mode active"
     >
       <section>
-        <h2>🎵 Walk-Up Songs</h2>
+        <h2>📣 Game Sounds</h2>
+        <div id="effect-buttons" class="sound-grid"></div>
+      </section>
 
-        <div
-          id="player-buttons"
-          class="sound-grid"
-        ></div>
+      <section>
+        <h2>🎵 Walk-Up Songs</h2>
+        <div id="quick-team-switcher" class="team-switcher" aria-label="Quick Board team">
+          <button class="team-button active" data-team="barons" type="button">BARONS</button>
+          <button class="team-button" data-team="dukes" type="button">DUKES</button>
+        </div>
+        <div id="quick-team-context" class="team-context">Showing Barons walk-ups</div>
+        <div id="player-buttons" class="sound-grid"></div>
       </section>
 
       <section>
         <h2>🎲 Mystery Walk-Ups</h2>
-
-        <div
-          id="spare-buttons"
-          class="sound-grid"
-        ></div>
-      </section>
-
-      <section>
-        <h2>📣 Game Sounds</h2>
-
-        <div
-          id="effect-buttons"
-          class="sound-grid"
-        ></div>
+        <div id="spare-buttons" class="sound-grid"></div>
       </section>
     </div>
 
@@ -1835,6 +1842,11 @@
       id="lineup-mode"
       class="app-mode"
     >
+      <div id="lineup-team-switcher" class="team-switcher" aria-label="Lineup team">
+        <button class="team-button active" data-team="barons" type="button">BARONS</button>
+        <button class="team-button" data-team="dukes" type="button">DUKES</button>
+      </div>
+      <div id="lineup-team-context" class="team-context">Barons lineup</div>
       <section class="game-control-panel">
 
         <div class="batting-section">
@@ -1975,7 +1987,7 @@
         id="version-footer"
         class="app-version"
       >
-        v2.1.0
+        v2.2.1
       </span>
       <br>
       <button
@@ -2082,6 +2094,15 @@
                 <option value="player">Walk-Up Song</option>
                 <option value="spare">Mystery / Spare</option>
                 <option value="effect">Game Sound</option>
+              </select>
+            </div>
+
+            <div id="editor-team-wrap" class="manage-field editor-team-wrap">
+              <label for="editor-team">Team</label>
+              <select id="editor-team" class="manage-select">
+                <option value="">Choose team…</option>
+                <option value="barons">Barons</option>
+                <option value="dukes">Dukes</option>
               </select>
             </div>
 
@@ -2280,8 +2301,8 @@
   </div>
 
   <script>
-    const APP_VERSION = "2.1.0";
-    const ASSET_VERSION = "2.1.0";
+    const APP_VERSION = "2.2.1";
+    const ASSET_VERSION = "2.2.1";
 
     const MODE_STORAGE_KEY =
       "barons-soundboard-mode";
@@ -2303,6 +2324,11 @@
 
     const ADMIN_SESSION_KEY =
       "barons-soundboard-admin-session";
+
+    const H2H_STORAGE_KEY = "barons-soundboard-head-to-head";
+    const H2H_TEAM_STORAGE_KEY = "barons-soundboard-h2h-team";
+    const DUKES_LINEUP_STORAGE_KEY = "barons-soundboard-dukes-lineup";
+    const DUKES_BATTER_STORAGE_KEY = "barons-soundboard-dukes-current-batter";
 
     const SUPABASE_URL =
       "https://qxpuggaommreuiercgwf.supabase.co";
@@ -2395,7 +2421,7 @@
         song: "Yiruma",
         file: "audio/jeewoo.mp3"
       }
-    ];
+    ].map((player) => ({ ...player, type: "player", team: "barons" }));
 
     let spareSongs = [
       {
@@ -2481,6 +2507,8 @@
     ];
 
     let currentMode = loadMode();
+    let headToHeadMode = localStorage.getItem(H2H_STORAGE_KEY) === "true";
+    let activeTeam = localStorage.getItem(H2H_TEAM_STORAGE_KEY) === "dukes" ? "dukes" : "barons";
     let lineup = loadLineup();
     let currentBatterIndex = loadCurrentBatterIndex();
     let previousBatterIndex = null;
@@ -2520,6 +2548,12 @@
 
     const lineupMode =
       document.getElementById("lineup-mode");
+
+    const h2hLaunch = document.getElementById("h2h-launch");
+    const quickTeamSwitcher = document.getElementById("quick-team-switcher");
+    const lineupTeamSwitcher = document.getElementById("lineup-team-switcher");
+    const quickTeamContext = document.getElementById("quick-team-context");
+    const lineupTeamContext = document.getElementById("lineup-team-context");
 
     const lineupList =
       document.getElementById("lineup-list");
@@ -2665,6 +2699,9 @@
     const editorAudioSelect =
       document.getElementById("editor-audio-select");
 
+    const editorTeamWrap = document.getElementById("editor-team-wrap");
+    const editorTeam = document.getElementById("editor-team");
+
     const newAudioWrap =
       document.getElementById("new-audio-wrap");
 
@@ -2686,6 +2723,7 @@
 
       await loadSoundsCatalogue();
 
+      initialiseHeadToHead();
       createQuickBoardButtons();
       initialiseMode();
       initialisePanelState();
@@ -2694,6 +2732,14 @@
 
       renderLineup();
       updateGamePanel();
+
+      h2hLaunch.addEventListener("click", toggleHeadToHead);
+      [quickTeamSwitcher, lineupTeamSwitcher].forEach((switcher) => {
+        switcher.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-team]");
+          if (button) switchActiveTeam(button.dataset.team);
+        });
+      });
 
       quickModeButton.addEventListener(
         "click",
@@ -2828,6 +2874,8 @@
         "change",
         updateNewAudioVisibility
       );
+
+      editorType.addEventListener("change", updateEditorTeamVisibility);
 
       editorCancel.addEventListener(
         "click",
@@ -3087,7 +3135,7 @@
 
           const meta = document.createElement("div");
           meta.className = "manage-sound-meta";
-          meta.textContent = [item.song, item.file]
+          meta.textContent = [item.type === "player" ? (item.team === "dukes" ? "Dukes" : "Barons") : null, item.song, item.file]
             .filter(Boolean)
             .join(" · ");
 
@@ -3168,6 +3216,8 @@
         : "Add New Button";
 
       editorType.value = item?.type || "player";
+      editorTeam.value = item ? (item.team || "barons") : "";
+      updateEditorTeamVisibility();
       editorName.value = item?.name || "";
       editorSong.value = item?.song || "";
       editorNewAudio.value = "";
@@ -3182,6 +3232,10 @@
           block: "start"
         });
       });
+    }
+
+    function updateEditorTeamVisibility() {
+      editorTeamWrap.classList.toggle("hidden", editorType.value !== "player");
     }
 
     function closeSoundEditor() {
@@ -3261,6 +3315,15 @@
         return;
       }
 
+      if (type === "player" && !editorTeam.value) {
+        showManageStatus(
+          "Choose whether this player belongs to the Barons or Dukes.",
+          "error"
+        );
+        editorTeam.focus();
+        return;
+      }
+
       if (!file) {
         showManageStatus(
           "Choose an existing audio file or enter the filename you uploaded to GitHub.",
@@ -3281,6 +3344,7 @@
         const payload = {
           type,
           name,
+          team: type === "player" ? editorTeam.value : null,
           song: song || null,
           file,
           sort_order: existing
@@ -3338,6 +3402,47 @@
       }
     }
 
+    function initialiseHeadToHead() {
+      document.body.classList.toggle("head-to-head", headToHeadMode);
+      h2hLaunch.classList.toggle("active", headToHeadMode);
+      h2hLaunch.textContent = headToHeadMode ? "✕ Exit H2H" : "⇄ Head-to-Head";
+      updateTeamUI();
+    }
+
+    function toggleHeadToHead() {
+      headToHeadMode = !headToHeadMode;
+      localStorage.setItem(H2H_STORAGE_KEY, String(headToHeadMode));
+      if (headToHeadMode) switchActiveTeam("barons", true);
+      else { activeTeam = "barons"; loadActiveTeamState(); }
+      initialiseHeadToHead();
+      createQuickBoardButtons();
+      renderLineup();
+    }
+
+    function switchActiveTeam(team, force = false) {
+      if (!force && team === activeTeam) return;
+      saveActiveTeamState();
+      activeTeam = team === "dukes" ? "dukes" : "barons";
+      localStorage.setItem(H2H_TEAM_STORAGE_KEY, activeTeam);
+      lineupEditing = false; openPickerIndex = null; previousBatterIndex = null;
+      loadActiveTeamState();
+      updateTeamUI();
+      createQuickBoardButtons();
+      renderLineup();
+    }
+
+    function updateTeamUI() {
+      document.querySelectorAll(".team-button").forEach((button) => button.classList.toggle("active", button.dataset.team === activeTeam));
+      const label = activeTeam === "dukes" ? "Dukes" : "Barons";
+      quickTeamContext.textContent = "Showing " + label + " walk-ups";
+      lineupTeamContext.textContent = label + " lineup";
+    }
+
+    function teamLineupKey() { return activeTeam === "dukes" ? DUKES_LINEUP_STORAGE_KEY : LINEUP_STORAGE_KEY; }
+    function teamBatterKey() { return activeTeam === "dukes" ? DUKES_BATTER_STORAGE_KEY : BATTER_STORAGE_KEY; }
+    function saveActiveTeamState() { saveLineup(); saveCurrentBatterIndex(); }
+    function loadActiveTeamState() { lineup = loadLineup(); currentBatterIndex = loadCurrentBatterIndex(); previousBatterIndex = null; }
+
     async function refreshCatalogueAndUI() {
       await loadSoundsCatalogue();
 
@@ -3355,7 +3460,7 @@
         const response = await fetch(
           SUPABASE_URL +
             "/rest/v1/sounds" +
-            "?select=id,type,name,song,file,sort_order" +
+            "?select=id,type,name,song,file,sort_order,team" +
             "&order=sort_order.asc",
           {
             headers: {
@@ -3447,6 +3552,7 @@
           name: row.name,
           song: row.song || "",
           file: row.file,
+          team: row.type === "player" ? (row.team || "barons") : null,
           sort_order:
             Number.isFinite(Number(row.sort_order))
               ? Number(row.sort_order)
@@ -3486,8 +3592,13 @@
     }
 
     function createQuickBoardButtons() {
+      const visiblePlayers = playerSongs.filter((player) => {
+        const team = player.team || "barons";
+        return headToHeadMode ? team === activeTeam : team === "barons";
+      });
+
       createSoundButtons(
-        [...playerSongs].sort(
+        [...visiblePlayers].sort(
           (a, b) => a.name.localeCompare(b.name)
         ),
         "player-buttons",
@@ -3514,6 +3625,8 @@
     ) {
       const container =
         document.getElementById(containerId);
+
+      container.innerHTML = "";
 
       items.forEach((item) => {
         const button =
@@ -4567,7 +4680,7 @@
         const saved =
           JSON.parse(
             localStorage.getItem(
-              LINEUP_STORAGE_KEY
+              teamLineupKey()
             )
           );
 
@@ -4584,13 +4697,13 @@
         );
       }
 
-      return [...defaultLineup];
+      return activeTeam === "dukes" ? Array(9).fill(null) : [...defaultLineup];
     }
 
     function saveLineup() {
       try {
         localStorage.setItem(
-          LINEUP_STORAGE_KEY,
+          teamLineupKey(),
           JSON.stringify(lineup)
         );
       } catch (error) {
@@ -4606,7 +4719,7 @@
         const saved =
           Number(
             localStorage.getItem(
-              BATTER_STORAGE_KEY
+              teamBatterKey()
             )
           );
 
@@ -4630,7 +4743,7 @@
     function saveCurrentBatterIndex() {
       try {
         localStorage.setItem(
-          BATTER_STORAGE_KEY,
+          teamBatterKey(),
           String(currentBatterIndex)
         );
       } catch (error) {
